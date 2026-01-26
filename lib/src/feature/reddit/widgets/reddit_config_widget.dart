@@ -38,6 +38,7 @@ class RedditConfigWidgetState extends State<RedditConfigWidget> {
   void initState() {
     super.initState();
     redditController = RedditController(redditRepository: RedditRepositoryImpl());
+    redditDataController = RedditDataController();
   }
 
   @override

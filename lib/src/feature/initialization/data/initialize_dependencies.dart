@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:control/control.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/foundation.dart';
+import 'package:l/l.dart';
 import 'package:no_sleep/src/common/constant/config.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/controller/controller_observer.dart';
@@ -13,15 +15,11 @@ import 'package:no_sleep/src/common/util/log_buffer.dart';
 import 'package:no_sleep/src/common/util/middleware/authentication_interceptor.dart';
 import 'package:no_sleep/src/common/util/middleware/logger_mw.dart';
 import 'package:no_sleep/src/common/util/screen_util.dart';
-import 'package:no_sleep/src/feature/authentication/controller/authentication_controller.dart';
-import 'package:no_sleep/src/feature/authentication/data/authentication_repository.dart';
 import 'package:no_sleep/src/feature/initialization/data/platform/platform_initialization.dart';
 import 'package:no_sleep/src/feature/initialization/models/dependencies.dart';
-import 'package:l/l.dart';
 import 'package:platform_info/platform_info.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 /// Initializes the app and returns a [Dependencies] object
 Future<Dependencies> $initializeDependencies({
@@ -95,14 +93,6 @@ final Map<String, _InitializationStep> _initializationSteps = <String, _Initiali
       // retry interceptor
     ],
   ),
-  'Prepare authentication controller': (dependencies) =>
-      dependencies.authenticationController = AuthenticationController(
-        repository: AuthenticationRepositoryImpl(
-          sharedPreferences: dependencies.sharedPreferences,
-          apiClient: dependencies.apiClient,
-        ),
-      ),
-
   // The 'Shrink database' step will only be included in non-release builds.
   if (!kReleaseMode)
     'Shrink database': (dependencies) async {

@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:no_sleep/src/common/database/database.dart';
 import 'package:no_sleep/src/common/model/app_metadata.dart';
 import 'package:no_sleep/src/common/util/api_client.dart';
-import 'package:no_sleep/src/feature/authentication/controller/authentication_controller.dart';
 import 'package:no_sleep/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,9 +32,6 @@ class Dependencies {
 
   /// API Client
   late final ApiClient apiClient;
-
-  /// Authentication controller
-  late final AuthenticationController authenticationController;
 
   @override
   String toString() => 'Dependencies{}';

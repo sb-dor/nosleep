@@ -7,6 +7,7 @@ import 'package:no_sleep/src/common/router/router_state_mixin.dart';
 import 'package:no_sleep/src/common/util/performance_overlay_tool.dart';
 import 'package:no_sleep/src/common/widget/window_scope.dart';
 import 'package:no_sleep/src/feature/authentication/widget/authentication_scope.dart';
+import 'package:no_sleep/src/feature/reddit/widgets/reddit_config_widget.dart';
 import 'package:octopus/octopus.dart';
 
 /// {@template app}
@@ -72,7 +73,7 @@ class _AppState extends State<App> with RouterStateMixin {
             child: Banner(
               location: BannerLocation.topEnd,
               message: _buildBannerMessage(),
-              child: AuthenticationScope(child: child ?? const SizedBox.shrink()),
+              child: const RedditConfigWidget(),
             ),
           ),
         ),

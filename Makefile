@@ -20,6 +20,10 @@ help:
 	@echo ''
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+
+flutter-clean:
+	@flutter clean
+
 .PHONY: version
 version: ## Check flutter version
 	@flutter --version
@@ -130,8 +134,11 @@ protobuf: ## Generate protobuf
 generate: get l10n format fluttergen ## Generate the code
 	@dart run build_runner build --delete-conflicting-outputs --release
 
+.PHONY: generate-format
+generate-format: generate
+	@dart format lib/
 
-.PHONY: generate
+.PHONY: generate-dev
 generate-dev: get l10n format fluttergen ## Generate the code
 	@dart run build_runner watch --delete-conflicting-outputs --release
 
@@ -164,32 +171,45 @@ diff: ## git diff
 	@git diff --exit-code
 	@RES=$$(git status --porcelain) ; if [ -n "$$RES" ]; then echo $$RES && exit 1 ; fi
 
+
+.PHONY: run-chrome-web-app
+run-chrome-web:
+	@flutter run -d chrome --web-browser-flag "--disable-web-security" --dart-define-from-file=config/development.json
+
+.PHONY: run-chrome-release-web-app
+run-chrome-release-web:
+	@flutter run -d chrome --web-browser-flag "--disable-web-security" --dart-define-from-file=config/production.json
+
 .PHONY: build-android-apk
-build-android: ## Build the android app
+build-android: flutter-clean generate ## Build the android app
 	@flutter build apk --release --dart-define-from-file=config/production.json
 
-.PHONY: build-android-appbundle
-build-android: ## Build the android app
+.PHONY: build-android-appBundle
+build-android-appBundle: flutter-clean generate ## Build the android app
 	@flutter build appbundle --release --dart-define-from-file=config/production.json
 
 .PHONY: build-windows
-build-windows: ## Build the windows app
+build-windows: flutter-clean generate ## Build the windows app
 	@flutter build windows --release --dart-define-from-file=config/production.json
 
 .PHONY: build-web
-build-web: ## Build the web app
-	@flutter build web --release --dart-define-from-file=config/production.json --no-source-maps --pwa-strategy offline-first --web-renderer canvaskit --web-resources-cdn --base-href /
+build-web: flutter-clean generate
+	@flutter build web --release --dart-define-from-file=config/production.json
+
+.PHONY: firebase-deploy
+firebase-deploy: build-web
+	@firebase deploy
 
 .PHONY: build-ios
-build-ios: ## Build the ios app
+build-ios: flutter-clean generate ## Build the ios app
 	@flutter build ios --release --dart-define-from-file=config/production.json
 
 .PHONY: build-macos
-build-macos: ## Build the macos app
+build-macos: flutter-clean generate ## Build the macos app
 	@flutter build macos --release --dart-define-from-file=config/production.json
 
 .PHONY: build-linux
-build-linux: ## Build the linux app
+build-linux: flutter-clean generate ## Build the linux app
 	@flutter build linux --release --dart-define-from-file=config/production.json
 
 #	@dart pub global activate flutterfire_cli
@@ -203,7 +223,7 @@ build-linux: ## Build the linux app
 
 # "assets/images/products\/(\d+)\/(\d+)\.jpg"
 #downscale-images:
-#	@cd assets/data/images
+#	@cd assets/datasources/images
 #	@find . -name "*.jpg" -exec mogrify -format webp {} \;
 #	@find . -name "*.jpeg" -exec mogrify -format webp {} \;
 #	@find . -name "*.png" -exec mogrify -format webp {} \;

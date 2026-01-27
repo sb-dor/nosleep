@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:no_sleep/src/common/util/local_pagination_util.dart';
 import 'package:no_sleep/src/common/util/screen_util.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/data/reddit_repository.dart';
@@ -37,7 +38,10 @@ class RedditConfigWidgetState extends State<RedditConfigWidget> {
   @override
   void initState() {
     super.initState();
-    redditController = RedditController(redditRepository: RedditRepositoryImpl());
+    redditController = RedditController(
+      redditRepository: RedditRepositoryImpl(),
+      localPaginationUtil: LocalPaginationUtil(),
+    );
     redditDataController = RedditDataController();
   }
 

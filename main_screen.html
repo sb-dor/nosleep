@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NoSleep - Horror Search Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d41132",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#0a0505",
+                        "surface-dark": "#1a0d0e",
+                    },
+                    fontFamily: {
+                        "display": ["Newsreader", "serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .blood-shadow {
+            box-shadow: 0 0 15px rgba(212, 17, 50, 0.15);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white min-h-screen">
+<header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-primary/20">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-size: 28px;">skull</span>
+<h1 class="text-xl font-bold tracking-tight text-primary uppercase">NoSleep</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-white">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full border border-primary/40 bg-surface-dark overflow-hidden">
+<div class="w-full h-full bg-gradient-to-br from-primary/40 to-black"></div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-24">
+<div class="px-4 py-4">
+<label class="flex flex-col w-full group">
+<div class="flex w-full items-stretch rounded-lg h-12 bg-white dark:bg-surface-dark border border-primary/30 group-focus-within:border-primary transition-all blood-shadow">
+<div class="flex items-center justify-center pl-4 text-primary">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex-1 bg-transparent border-none focus:ring-0 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 px-3 text-base font-normal italic" placeholder="Search the darkness..." value="haunted woods"/>
+<button class="flex items-center justify-center pr-4 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">cancel</span>
+</button>
+</div>
+</label>
+</div>
+<div class="flex gap-3 px-4 py-2 overflow-x-auto no-scrollbar">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-5 text-white shadow-lg">
+<span class="text-sm font-semibold tracking-wide">Newest</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white/5 dark:bg-surface-dark border border-white/10 dark:border-primary/20 px-5 text-gray-600 dark:text-gray-300 hover:border-primary/50 transition-colors">
+<span class="text-sm font-medium">Top Rated</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white/5 dark:bg-surface-dark border border-white/10 dark:border-primary/20 px-5 text-gray-600 dark:text-gray-300 hover:border-primary/50 transition-colors">
+<span class="text-sm font-medium">Classic</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white/5 dark:bg-surface-dark border border-white/10 dark:border-primary/20 px-5 text-gray-600 dark:text-gray-300 hover:border-primary/50 transition-colors">
+<span class="text-sm font-medium">Urban Legends</span>
+</button>
+</div>
+<div class="px-4 pt-6 pb-2">
+<p class="text-xs uppercase tracking-[0.2em] text-primary font-bold">14 Results Manifested</p>
+</div>
+<div class="flex flex-col divide-y divide-primary/10">
+<div class="group relative flex flex-col gap-2 bg-transparent px-4 py-6 hover:bg-primary/5 transition-all">
+<div class="flex justify-between items-start gap-4">
+<div class="flex-1">
+<h3 class="text-xl font-bold leading-tight text-white group-hover:text-primary transition-colors">
+                            My basement has a door that wasn't there yesterday
+                        </h3>
+<div class="flex items-center gap-2 mt-1 mb-2">
+<span class="text-xs font-medium text-primary">u/TheMidnightStalker</span>
+<span class="w-1 h-1 rounded-full bg-gray-600"></span>
+<span class="text-xs text-gray-500">6h ago</span>
+</div>
+<p class="text-gray-400 text-sm italic line-clamp-2 leading-relaxed">
+                            I heard the scratching first, then the rhythmic tapping of long fingernails against the wood. It’s not just a door; I can hear something breathing on the other side...
+                        </p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px; font-variation-settings: 'FILL' 1;">skull</span>
+<span class="text-primary text-xs font-bold tracking-tighter">12.4k SPOOKS</span>
+</div>
+<div class="flex items-center gap-1 text-gray-500">
+<span class="material-symbols-outlined" style="font-size: 18px;">chat_bubble</span>
+<span class="text-xs">482</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary/40 group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+</div>
+</div>
+<div class="group relative flex flex-col gap-2 bg-transparent px-4 py-6 hover:bg-primary/5 transition-all">
+<div class="flex justify-between items-start gap-4">
+<div class="flex-1">
+<h3 class="text-xl font-bold leading-tight text-white group-hover:text-primary transition-colors">
+                            I found a VHS tape in my mailbox with no label
+                        </h3>
+<div class="flex items-center gap-2 mt-1 mb-2">
+<span class="text-xs font-medium text-primary">u/GhostInTheMachine</span>
+<span class="w-1 h-1 rounded-full bg-gray-600"></span>
+<span class="text-xs text-gray-500">14h ago</span>
+</div>
+<p class="text-gray-400 text-sm italic line-clamp-2 leading-relaxed">
+                            The footage was just a static-filled room, but then I realized the furniture was arranged exactly like mine. Then the cameraman walked into the kitchen...
+                        </p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px; font-variation-settings: 'FILL' 1;">skull</span>
+<span class="text-primary text-xs font-bold tracking-tighter">8.9k SPOOKS</span>
+</div>
+<div class="flex items-center gap-1 text-gray-500">
+<span class="material-symbols-outlined" style="font-size: 18px;">chat_bubble</span>
+<span class="text-xs">215</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary/40 group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+</div>
+</div>
+<div class="group relative flex flex-col gap-2 bg-transparent px-4 py-6 hover:bg-primary/5 transition-all">
+<div class="flex justify-between items-start gap-4">
+<div class="flex-1">
+<h3 class="text-xl font-bold leading-tight text-white group-hover:text-primary transition-colors">
+                            Don't look at the reflection in the microwave
+                        </h3>
+<div class="flex items-center gap-2 mt-1 mb-2">
+<span class="text-xs font-medium text-primary">u/KitchenNightmare</span>
+<span class="w-1 h-1 rounded-full bg-gray-600"></span>
+<span class="text-xs text-gray-500">2d ago</span>
+</div>
+<p class="text-gray-400 text-sm italic line-clamp-2 leading-relaxed">
+                            It started as a smudge. But every time I heat something up, the figure in the reflection gets closer. It's standing right behind me now, but when I turn around...
+                        </p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px; font-variation-settings: 'FILL' 1;">skull</span>
+<span class="text-primary text-xs font-bold tracking-tighter">15.2k SPOOKS</span>
+</div>
+<div class="flex items-center gap-1 text-gray-500">
+<span class="material-symbols-outlined" style="font-size: 18px;">chat_bubble</span>
+<span class="text-xs">1.1k</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary/40 group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+</div>
+</div>
+<div class="group relative flex flex-col gap-2 bg-transparent px-4 py-6 hover:bg-primary/5 transition-all">
+<div class="flex justify-between items-start gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary/20 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded border border-primary/30 uppercase tracking-widest">Hall of Fame</span>
+</div>
+<h3 class="text-xl font-bold leading-tight text-white group-hover:text-primary transition-colors">
+                            The Woods are Whispering My Social Security Number
+                        </h3>
+<div class="flex items-center gap-2 mt-1 mb-2">
+<span class="text-xs font-medium text-primary">u/IdentityThiefFromHell</span>
+<span class="w-1 h-1 rounded-full bg-gray-600"></span>
+<span class="text-xs text-gray-500">1y ago</span>
+</div>
+<p class="text-gray-400 text-sm italic line-clamp-2 leading-relaxed">
+                            At first I thought it was just the wind through the pines. But then it started reciting my mother's maiden name and my first pet's name. It wants more than my data...
+                        </p>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px; font-variation-settings: 'FILL' 1;">skull</span>
+<span class="text-primary text-xs font-bold tracking-tighter">42.1k SPOOKS</span>
+</div>
+<div class="flex items-center gap-1 text-gray-500">
+<span class="material-symbols-outlined" style="font-size: 18px;">chat_bubble</span>
+<span class="text-xs">3.4k</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary/40 group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+</div>
+</div>
+</div>
+<div class="p-8 flex justify-center">
+<button class="flex items-center gap-2 px-8 py-3 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-all font-bold uppercase tracking-widest text-xs">
+                Exhume More Stories
+                <span class="material-symbols-outlined" style="font-size: 18px;">expand_more</span>
+</button>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-background-light/95 dark:bg-background-dark/90 backdrop-blur-xl border-t border-primary/20">
+<div class="max-w-md mx-auto flex justify-around items-center h-16 pb-2">
+<button class="flex flex-col items-center justify-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="text-[10px] uppercase font-bold tracking-tighter">Seek</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bookmarks</span>
+<span class="text-[10px] uppercase font-bold tracking-tighter">Bookmarks</span>
+</button>
+</div>
+</nav>
+
+</body></html>

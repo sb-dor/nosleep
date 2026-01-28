@@ -34,7 +34,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset > _scrollController.position.maxScrollExtent * 0.7) {
+    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
       redditController.paginate('noSleep');
     }
   }
@@ -192,7 +192,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
                   child: Center(child: Text('Something went wrong')),
                 ),
                 Reddit$LoadedState() => SliverFixedExtentList.builder(
-                  itemExtent: 220,
+                  itemExtent:  245,
                   itemCount: state.posts.length,
                   itemBuilder: (context, index) {
                     final post = state.posts[index];
@@ -238,123 +238,139 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
     ),
   );
 
-  Widget _buildPostCard(RedditPost post, int index) => Column(
-    mainAxisAlignment: .spaceEvenly,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFd41132).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
-                  ),
-                  child: const Text(
-                    'HALL OF FAME',
-                    style: TextStyle(
-                      color: Color(0xFFd41132),
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              post.title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Text(
-                  'u/${post.author ?? "Anonymous"}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFFd41132),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  width: 4,
-                  height: 4,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
-                ),
-                const Text('6h ago', style: TextStyle(fontSize: 12, color: Colors.grey)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              post.selftext ?? 'No description available',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14, color: Colors.grey, fontStyle: FontStyle.italic),
-            ),
-          ],
-        ),
+  Widget _buildPostCard(RedditPost post, int index) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.grey[900]?.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
       ),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+      child: Column(
+        mainAxisAlignment: .spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFd41132).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.masks, color: Color(0xFFd41132), size: 16),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${(post.score ?? 0).toInt()} SPOOKS',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFFd41132),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
                 Row(
                   children: [
-                    const Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 18),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${post.numComments ?? 0}',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFd41132).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
+                      ),
+                      child: const Text(
+                        'HALL OF FAME',
+                        style: TextStyle(
+                          color: Color(0xFFd41132),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  post.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      'u/${post.author ?? "Anonymous"}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFFd41132),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Container(
+                      width: 4,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
+                    ),
+                    const Text('6h ago', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  post.selftext ?? 'No description available',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ],
             ),
-            const Icon(Icons.arrow_forward_ios, color: Color(0xFFd41132), size: 16),
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFd41132).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.masks, color: Color(0xFFd41132), size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${(post.score ?? 0).toInt()} SPOOKS',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFFd41132),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Row(
+                      children: [
+                        const Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${post.numComments ?? 0}',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const Icon(Icons.arrow_forward_ios, color: Color(0xFFd41132), size: 16),
+              ],
+            ),
+          ),
+        ],
       ),
-    ],
+    ),
   );
 }

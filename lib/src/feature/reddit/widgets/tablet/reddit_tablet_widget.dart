@@ -15,12 +15,26 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> {
   late final _redditInhWidget = RedditConfigInhWidget.of(context);
   late final redditController = _redditInhWidget.redditController;
   late final redditDataController = _redditInhWidget.redditDataController;
+  final ScrollController _scrollController = ScrollController();
   String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     redditController.load('noSleep');
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
+      redditController.paginate('noSleep');
+    }
   }
 
   @override
@@ -65,11 +79,13 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 48),
           child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               // Search Bar
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 800),
                     decoration: BoxDecoration(
@@ -130,17 +146,26 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> {
               // Sort Buttons
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
                     children: [
-                      _buildSortButton('Newest', true),
-                      const SizedBox(width: 12),
-                      _buildSortButton('Top Rated', false),
-                      const SizedBox(width: 12),
-                      _buildSortButton('Classic', false),
-                      const SizedBox(width: 12),
-                      _buildSortButton('Urban Legends', false),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: _buildSortButton('Newest', true)),
+                          const SizedBox(width: 12),
+                          Expanded(child: _buildSortButton('Top Rated', false)),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: _buildSortButton('Classic', false)),
+                          const SizedBox(width: 12),
+                          Expanded(child: _buildSortButton('Urban Legends', false)),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -149,8 +174,9 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> {
               // Results Count
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Center(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
                     child: Text(
                       '${redditController.state is Reddit$LoadedState ? (redditController.state as Reddit$LoadedState).posts.length : 0} RESULTS MANIFESTED',
                       style: TextStyle(
@@ -172,21 +198,24 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> {
                 Reddit$ErrorState() => const SliverFillRemaining(
                   child: Center(child: Text('Something went wrong')),
                 ),
-                Reddit$LoadedState() => SliverGrid(
+                Reddit$LoadedState() => SliverGrid.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 1.4,
                     crossAxisSpacing: 24,
                     mainAxisSpacing: 24,
+                    mainAxisExtent: 320,
                   ),
-                  delegate: SliverChildBuilderDelegate((context, index) {
+                  itemCount: state.posts.length,
+                  itemBuilder: (context, index) {
                     final post = state.posts[index];
                     return _buildPostCard(post, index);
-                  }, childCount: state.posts.length),
+                  },
                 ),
               },
-
-              const SliverToBoxAdapter(child: SizedBox(height: 48)),
+              if (state is Reddit$LoadedState && state.hasMore)
+                const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
             ],
           ),
         ),
@@ -214,134 +243,139 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> {
     ),
   );
 
-  Widget _buildPostCard(RedditPost post, int index) => Container(
+  Widget _buildPostCard(RedditPost post, int index) => DecoratedBox(
     decoration: BoxDecoration(
       color: Colors.grey[900]?.withValues(alpha: 0.3),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
     ),
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFd41132).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
-              ),
-              child: const Text(
-                'HALL OF FAME',
-                style: TextStyle(
-                  color: Color(0xFFd41132),
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Text(
-                post.title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  height: 1.3,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFd41132).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Text(
-                    'u/${post.author ?? "Anonymous"}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFFd41132),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Container(
-                    width: 4,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
-                  ),
-                  const Text('6h ago', style: TextStyle(fontSize: 13, color: Colors.grey)),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: Text(
-                  post.selftext ?? 'No description available',
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
+                child: const Text(
+                  'HALL OF FAME',
+                  style: TextStyle(
+                    color: Color(0xFFd41132),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
                   ),
                 ),
               ),
             ],
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+          const SizedBox(height: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFd41132).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
+                Text(
+                  post.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    height: 1.3,
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.masks, color: Color(0xFFd41132), size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${(post.score ?? 0).toInt()}k SPOOKS',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFFd41132),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 20),
-                Row(
+                const SizedBox(height: 12),
+                Wrap(
                   children: [
-                    const Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 20),
-                    const SizedBox(width: 6),
                     Text(
-                      '${post.numComments ?? 0}',
+                      'u/${post.author ?? "Anonymous"}',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFFd41132),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Container(
+                      width: 4,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
+                    ),
+                    Text(
+                      post.createdUtc.toString(),
                       style: const TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: Text(
+                    post.selftext ?? 'No description available',
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
               ],
             ),
-            const Icon(Icons.arrow_forward_ios, color: Color(0xFFd41132), size: 18),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFd41132).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.masks, color: Color(0xFFd41132), size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${(post.score ?? 0).toInt()}k SPOOKS',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Color(0xFFd41132),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Row(
+                    children: [
+                      const Icon(Icons.chat_bubble_outline, color: Colors.grey, size: 15),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${post.numComments ?? 0}',
+                        style: const TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Icon(Icons.arrow_forward_ios, color: Color(0xFFd41132), size: 18),
+            ],
+          ),
+        ],
+      ),
     ),
   );
 }

@@ -27,7 +27,9 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
 
   @override
   void dispose() {
-    _scrollController..removeListener(_listener)..dispose();
+    _scrollController
+      ..removeListener(_listener)
+      ..dispose();
     super.dispose();
   }
 
@@ -44,133 +46,147 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
       body: Row(
         children: [
           // Sidebar
-          Container(
+          SizedBox(
             width: 300,
-            decoration: const BoxDecoration(color: Color(0xFF0a0505)),
-            child: Column(
-              children: [
-                // Header
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.eighteen_mp, color: Color(0xFFd41132), size: 28),
-                      SizedBox(width: 8),
-                      Text(
-                        'NoSleep',
-                        style: TextStyle(
-                          color: Color(0xFFd41132),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Search Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFd41132).withValues(alpha: 0.15),
-                          blurRadius: 15,
-                          offset: Offset.zero,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 16),
-                          child: Icon(Icons.search, color: Color(0xFFd41132)),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
-                              hintText: 'Search the darkness...',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                searchQuery = value;
-                              });
-                            },
-                            onSubmitted: (value) {
-                              if (value.isNotEmpty) {
-                                redditController.load(value);
-                                redditDataController.setSelectedSubreddit(value);
-                              }
-                            },
-                          ),
-                        ),
-                        if (searchQuery.isNotEmpty)
-                          IconButton(
-                            icon: const Icon(Icons.cancel, color: Colors.grey),
-                            onPressed: () {
-                              setState(() {
-                                searchQuery = '';
-                              });
-                            },
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Sort Buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: Column(
-                    children: [
-                      Row(
+            child: DecoratedBox(
+              decoration: const BoxDecoration(color: Color(0xFF0a0505)),
+              child: CustomScrollView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  // Header
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
                         children: [
-                          Expanded(child: _buildSortButton('Newest', true)),
-                          const SizedBox(width: 8),
-                          Expanded(child: _buildSortButton('Top Rated', false)),
+                          Icon(Icons.eighteen_mp, color: Color(0xFFd41132), size: 28),
+                          SizedBox(width: 8),
+                          Text(
+                            'NoSleep',
+                            style: TextStyle(
+                              color: Color(0xFFd41132),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      _buildSortButton('Classic', false),
-                    ],
+                    ),
                   ),
-                ),
 
-                // Popular Subreddits
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'POPULAR SUBREDDITS',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                        letterSpacing: 1.5,
+                  // Search Bar
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[900],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFd41132).withValues(alpha: 0.15),
+                              blurRadius: 15,
+                              offset: Offset.zero,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 16),
+                              child: Icon(Icons.search, color: Color(0xFFd41132)),
+                            ),
+                            Expanded(
+                              child: TextField(
+                                style: const TextStyle(color: Colors.white),
+                                decoration: const InputDecoration(
+                                  hintText: 'Search the darkness...',
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 12,
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchQuery = value;
+                                  });
+                                },
+                                onSubmitted: (value) {
+                                  if (value.isNotEmpty) {
+                                    redditController.load(value);
+                                    redditDataController.setSelectedSubreddit(value);
+                                  }
+                                },
+                              ),
+                            ),
+                            if (searchQuery.isNotEmpty)
+                              IconButton(
+                                icon: const Icon(Icons.cancel, color: Colors.grey),
+                                onPressed: () {
+                                  setState(() {
+                                    searchQuery = '';
+                                  });
+                                },
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                Expanded(
-                  child: switch (state) {
-                    Reddit$InitialState() => const SizedBox.shrink(),
-                    Reddit$LoadingState() => const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-                    Reddit$ErrorState() => Center(
+                  // Sort Buttons
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: _buildSortButton('Newest', true)),
+                              const SizedBox(width: 8),
+                              Expanded(child: _buildSortButton('Top Rated', false)),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          _buildSortButton('Classic', false),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Popular Subreddits
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'POPULAR Articles',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[600],
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  switch (state) {
+                    Reddit$InitialState() => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                    Reddit$LoadingState() => const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator.adaptive()),
+                    ),
+                    Reddit$ErrorState() => SliverFillRemaining(
+                      child: Column(
+                        mainAxisAlignment: .center,
+                        crossAxisAlignment: .center,
                         children: [
                           Text('Error: ${state.message}'),
                           ElevatedButton(
@@ -183,8 +199,8 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
                         ],
                       ),
                     ),
-                    Reddit$LoadedState() => ListView.builder(
-                      controller: _scrollController,
+                    Reddit$LoadedState() => SliverFixedExtentList.builder(
+                      itemExtent: 100,
                       itemCount: state.posts.length,
                       itemBuilder: (context, index) {
                         final post = state.posts[index];
@@ -192,8 +208,13 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
                       },
                     ),
                   },
-                ),
-              ],
+
+                  if (state is Reddit$LoadedState && state.hasMore)
+                    const SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator.adaptive()),
+                    ),
+                ],
+              ),
             ),
           ),
         ],
@@ -236,6 +257,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: .spaceBetween,
       children: [
         Text(
           post.title,
@@ -305,7 +327,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
                         color: Color(0xFFd41132),
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
+                        letterSpacing: 1,
                       ),
                     ),
                   ),
@@ -373,7 +395,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
                         const Icon(Icons.masks, color: Color(0xFFd41132), size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          '${(post.score ?? 0).toInt()}k SPOOKS',
+                          '${(post.score ?? 0).toInt()} SPOOKS',
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFFd41132),

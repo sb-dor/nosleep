@@ -15,12 +15,28 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
   late final _redditInhWidget = RedditConfigInhWidget.of(context);
   late final redditController = _redditInhWidget.redditController;
   late final redditDataController = _redditInhWidget.redditDataController;
+  final ScrollController _scrollController = ScrollController();
   String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     redditController.load('noSleep');
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_scrollListener)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > _scrollController.position.maxScrollExtent * 0.7) {
+      redditController.paginate('noSleep');
+    }
   }
 
   @override
@@ -63,6 +79,8 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
       ),
       body: SafeArea(
         child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             // Search Bar
             SliverToBoxAdapter(
@@ -174,11 +192,13 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
                 itemCount: state.posts.length,
                 itemBuilder: (context, index) {
                   final post = state.posts[index];
-
                   return _buildPostCard(post, index);
                 },
               ),
             },
+
+            if (state is Reddit$LoadedState && state.hasMore)
+              const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator.adaptive())),
           ],
         ),
       ),

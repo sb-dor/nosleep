@@ -21,7 +21,7 @@ sealed class RedditState with _$RedditState {
   }) = Reddit$LoadedState;
 }
 
-final class RedditController extends StateController<RedditState> with SequentialControllerHandler {
+final class RedditController extends StateController<RedditState> with DroppableControllerHandler {
   RedditController({
     required final IRedditRepository redditRepository,
     required final LocalPaginationUtil localPaginationUtil,
@@ -46,8 +46,12 @@ final class RedditController extends StateController<RedditState> with Sequentia
 
   Future<void> paginate(final String subreddit, {final int limit = 10}) => handle(() async {
     if (state is! Reddit$LoadedState) return;
+
     final currentState = state as Reddit$LoadedState;
+
     if (!currentState.hasMore) return;
+
+    final currentList = List.of(currentState.posts);
 
     final data = await _redditRepository.getPosts(
       subreddit,
@@ -60,6 +64,8 @@ final class RedditController extends StateController<RedditState> with Sequentia
       limitInPage: limit,
     );
 
-    setState(RedditState.loaded(posts: data.posts, hasMore: hasMore, nextPage: data.nextPage));
+    currentList.addAll(data.posts);
+
+    setState(RedditState.loaded(posts: currentList, hasMore: hasMore, nextPage: data.nextPage));
   });
 }

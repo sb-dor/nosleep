@@ -10,10 +10,10 @@ final class RedditPostJsonConverter extends JsonConverter<RedditPost, Map<String
     // selftext: json['selftext'] as String?,
     // url: json['url'] as String?,
     // permalink: json['permalink'] as String?,
-    // score: json['score'] as int?,
+    score: json['score'] as int?,
     // ups: json['ups'] as int?,
     // downs: json['downs'] as int?,
-    // numComments: json['num_comments'] as int?,
+    numComments: json['num_comments'] as int?,
     // thumbnail: json['thumbnail'] as String?,
     // imageUrl: json['url'] as String?, // Use 'url' for image if available
     // created: json['created'] != null ? DateTime.fromMillisecondsSinceEpoch((json['created'] as num).toInt() * 1000) : null,

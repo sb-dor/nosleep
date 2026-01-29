@@ -1,5 +1,6 @@
 import 'package:control/control.dart';
 import 'package:flutter/material.dart';
+import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_config_widget.dart';
@@ -38,6 +39,8 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
       redditController.paginate('noSleep');
     }
   }
+
+  Widget? _selectedPost;
 
   @override
   Widget build(BuildContext context) => StateConsumer<RedditController, RedditState>(
@@ -204,7 +207,20 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
                       itemCount: state.posts.length,
                       itemBuilder: (context, index) {
                         final post = state.posts[index];
-                        return _buildSidebarPostItem(post, index);
+                        return MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedPost = ArticleConfigWidget(
+                                  postId: post.id,
+                                  key: ValueKey(post.id),
+                                );
+                              });
+                            },
+                            child: _buildSidebarPostItem(post, index),
+                          ),
+                        );
                       },
                     ),
                   },
@@ -217,6 +233,8 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
               ),
             ),
           ),
+
+          if (_selectedPost != null) Expanded(child: _selectedPost!),
         ],
       ),
     ),
@@ -290,7 +308,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
                 const Icon(Icons.masks, color: Color(0xFFd41132), size: 12),
                 const SizedBox(width: 4),
                 Text(
-                  '${(post.score ?? 0).toInt()}k',
+                  '${(post.score ?? 0).toInt()}',
                   style: const TextStyle(fontSize: 10, color: Colors.grey),
                 ),
               ],

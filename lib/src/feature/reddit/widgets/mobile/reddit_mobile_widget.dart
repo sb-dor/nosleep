@@ -1,5 +1,6 @@
 import 'package:control/control.dart';
 import 'package:flutter/material.dart';
+import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_config_widget.dart';
@@ -192,11 +193,21 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
                   child: Center(child: Text('Something went wrong')),
                 ),
                 Reddit$LoadedState() => SliverFixedExtentList.builder(
-                  itemExtent:  245,
+                  itemExtent: 245,
                   itemCount: state.posts.length,
                   itemBuilder: (context, index) {
                     final post = state.posts[index];
-                    return _buildPostCard(post, index);
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ArticleConfigWidget(postId: post.id),
+                          ),
+                        );
+                      },
+                      child: _buildPostCard(post, index),
+                    );
                   },
                 ),
               },

@@ -102,6 +102,7 @@ dependencies:
     path: ./packages/ui
   drift_flutter: ^0.2.7
   freezed_annotation: ^3.1.0
+  timeago: ^3.7.1
 
 dev_dependencies:
   # Unit & Widget tests for Flutter

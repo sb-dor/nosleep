@@ -45,6 +45,6 @@ class RedditPost {
   final bool? nsfw;
   final String? subreddit;
   final String? subredditType;
-  final String? subredditSubscribers;
+  final int? subredditSubscribers;
   final Map<String, Object?>? media;
 }

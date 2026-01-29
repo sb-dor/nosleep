@@ -21,7 +21,7 @@ class _ArticleDesktopWidgetState extends State<ArticleDesktopWidget> {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: _controller,
-      builder: (_, __) {
+      builder: (_, _) {
         final state = _controller.state;
 
         return switch (state) {

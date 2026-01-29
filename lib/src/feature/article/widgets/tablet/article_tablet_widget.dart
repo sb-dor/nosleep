@@ -25,22 +25,24 @@ class _ArticleTabletWidgetState extends State<ArticleTabletWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(forceMaterialTransparency: true, title: const Text('NoSleep')),
-      body: ListenableBuilder(
-        listenable: _controller,
-        builder: (_, __) {
-          final state = _controller.state;
+      body: SafeArea(
+        child: ListenableBuilder(
+          listenable: _controller,
+          builder: (_, __) {
+            final state = _controller.state;
 
-          return switch (state) {
-            Article$InitialState() ||
-            Article$InProgressState() => const Center(child: CircularProgressIndicator()),
+            return switch (state) {
+              Article$InitialState() ||
+              Article$InProgressState() => const Center(child: CircularProgressIndicator()),
 
-            Article$ErrorState() => const Center(
-              child: Text('Failed to load article', style: TextStyle(color: Colors.redAccent)),
-            ),
+              Article$ErrorState() => const Center(
+                child: Text('Failed to load article', style: TextStyle(color: Colors.redAccent)),
+              ),
 
-            Article$CompletedState(:final article) => _ArticleTabletScroll(article: article!),
-          };
-        },
+              Article$CompletedState(:final article) => _ArticleTabletScroll(article: article!),
+            };
+          },
+        ),
       ),
     );
   }
@@ -83,25 +85,27 @@ class _ArticleTabletScroll extends StatelessWidget {
 
             const SliverToBoxAdapter(child: Divider(height: 1)),
 
-            const SliverPadding(
-              padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  'Comments',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            if (flatComments.isNotEmpty)
+              const SliverPadding(
+                padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
+                sliver: SliverToBoxAdapter(
+                  child: Text(
+                    'Comments',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
 
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 24, 24),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final comment = flatComments[index];
-                  return _CommentTile(comment: comment);
-                }, childCount: flatComments.length),
+            if (flatComments.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 24, 24),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final comment = flatComments[index];
+                    return _CommentTile(comment: comment);
+                  }, childCount: flatComments.length),
+                ),
               ),
-            ),
           ],
         ),
       ),

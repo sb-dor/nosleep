@@ -32,22 +32,24 @@ class _ArticleMobileWidgetState extends State<ArticleMobileWidget> {
         forceMaterialTransparency: true,
         title: const Text('NoSleep'),
       ),
-      body: ListenableBuilder(
-        listenable: _controller,
-        builder: (_, __) {
-          final state = _controller.state;
-
-          return switch (state) {
-            Article$InitialState() ||
-            Article$InProgressState() => const Center(child: CircularProgressIndicator()),
-
-            Article$ErrorState() => const Center(
-              child: Text('Failed to load article', style: TextStyle(color: Colors.redAccent)),
-            ),
-
-            Article$CompletedState(:final article) => _ArticleMobileScroll(article: article!),
-          };
-        },
+      body: SafeArea(
+        child: ListenableBuilder(
+          listenable: _controller,
+          builder: (_, __) {
+            final state = _controller.state;
+        
+            return switch (state) {
+              Article$InitialState() ||
+              Article$InProgressState() => const Center(child: CircularProgressIndicator()),
+        
+              Article$ErrorState() => const Center(
+                child: Text('Failed to load article', style: TextStyle(color: Colors.redAccent)),
+              ),
+        
+              Article$CompletedState(:final article) => _ArticleMobileScroll(article: article!),
+            };
+          },
+        ),
       ),
     );
   }
@@ -85,6 +87,7 @@ class _ArticleMobileScroll extends StatelessWidget {
 
         const SliverToBoxAdapter(child: Divider(height: 1)),
 
+        if (flatComments.isNotEmpty)
         const SliverPadding(
           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
           sliver: SliverToBoxAdapter(
@@ -92,6 +95,7 @@ class _ArticleMobileScroll extends StatelessWidget {
           ),
         ),
 
+        if (flatComments.isNotEmpty)
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(8, 0, 16, 16),
           sliver: SliverList(

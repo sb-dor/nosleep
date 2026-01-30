@@ -25,7 +25,7 @@ Future<void> _$desktopInitialization() async {
   await windowManager.ensureInitialized();
   final windowOptions = WindowOptions(
     minimumSize: const Size(320, 480),
-    size: const Size(960, 800),
+    size: const Size(1280, 720),
     /* maximumSize: const Size(1440, 1080), */
     center: true,
     windowButtonVisibility: true,
@@ -36,7 +36,7 @@ Future<void> _$desktopInitialization() async {
     titleBarStyle: TitleBarStyle.hidden,
     alwaysOnTop: false,
     fullScreen: false,
-    title: 'Application',
+    title: 'NoSleep',
   );
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     if (io.Platform.isMacOS) {

@@ -1,10 +1,13 @@
 import 'package:control/control.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:no_sleep/src/common/widget/empty_widget.dart';
+import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
 import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
-import 'package:no_sleep/src/feature/reddit/widgets/reddit_config_widget.dart';
+import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
+import 'package:no_sleep/src/feature/reddit/widgets/reddit_state_mixin.dart';
 
 class RedditMobileWidget extends StatefulWidget {
   const RedditMobileWidget({super.key});
@@ -13,244 +16,246 @@ class RedditMobileWidget extends StatefulWidget {
   State<RedditMobileWidget> createState() => _RedditMobileWidgetState();
 }
 
-class _RedditMobileWidgetState extends State<RedditMobileWidget> {
-  late final _redditInhWidget = RedditConfigInhWidget.of(context);
-  late final redditController = _redditInhWidget.redditController;
-  late final redditDataController = _redditInhWidget.redditDataController;
-  final ScrollController _scrollController = ScrollController();
-  String searchQuery = '';
-
-  @override
-  void initState() {
-    super.initState();
-    redditController.load('noSleep');
-    _scrollController.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    _scrollController
-      ..removeListener(_scrollListener)
-      ..dispose();
-    super.dispose();
-  }
-
-  void _scrollListener() {
-    if (_scrollController.offset == _scrollController.position.maxScrollExtent) {
-      redditController.paginate('noSleep');
-    }
-  }
-
+class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStateMixin {
   @override
   Widget build(BuildContext context) => StateConsumer<RedditController, RedditState>(
     controller: redditController,
-    builder: (context, state, child) => Scaffold(
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-        title: const Row(
-          children: [
-            Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132), size: 20),
-            SizedBox(width: 8),
-            Text(
-              'NoSleep',
-              style: TextStyle(
-                color: Color(0xFFd41132),
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {},
-          ),
-          Container(
-            width: 32,
-            height: 32,
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(9999),
-              border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.4)),
-              color: const Color(0xFFd41132).withValues(alpha: 0.4),
-            ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: RefreshIndicator.adaptive(
-          onRefresh: () async {
-            await redditController.load('noSleep');
-          },
-          child: CustomScrollView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              // Search Bar
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.3)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFd41132).withValues(alpha: 0.15),
-                          blurRadius: 15,
-                          offset: Offset.zero,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 16),
-                          child: Icon(Icons.search, color: Color(0xFFd41132)),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
-                              hintText: 'Search the darkness...',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                searchQuery = value;
-                              });
-                            },
-                            onSubmitted: (value) {
-                              if (value.isNotEmpty) {
-                                redditController.load(value);
-                                redditDataController.setSelectedSubreddit(value);
-                              }
-                            },
-                          ),
-                        ),
-                        if (searchQuery.isNotEmpty)
-                          IconButton(
-                            icon: const Icon(Icons.cancel, color: Colors.grey),
-                            onPressed: () {
-                              setState(() {
-                                searchQuery = '';
-                              });
-                            },
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Sort Buttons
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        _buildSortButton('Newest', true),
-                        const SizedBox(width: 8),
-                        _buildSortButton('Top Rated', false),
-                        const SizedBox(width: 8),
-                        _buildSortButton('Classic', false),
-                        const SizedBox(width: 8),
-                        _buildSortButton('Urban Legends', false),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Results Count
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Text(
-                    '${redditController.state is Reddit$LoadedState ? (redditController.state as Reddit$LoadedState).posts.length : 0} RESULTS MANIFESTED',
-                    style: TextStyle(
-                      fontSize: 12,
+    builder: (context, state, child) {
+      // Show the list of posts
+      return ListenableBuilder(
+        listenable: redditDataController,
+        builder: (context, child) {
+          return Scaffold(
+            appBar: AppBar(
+              forceMaterialTransparency: true,
+              title:  Row(
+                children: [
+                  const Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132), size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    redditDataController.subreddit,
+                    style: const TextStyle(
+                      color: Color(0xFFd41132),
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey[600],
-                      letterSpacing: 1.5,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                ),
+                ],
               ),
-
-              switch (state) {
-                Reddit$InitialState() => const SliverToBoxAdapter(child: SizedBox.shrink()),
-                Reddit$LoadingState() => const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator.adaptive()),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.notifications, color: Colors.white),
+                  onPressed: () {},
                 ),
-                Reddit$ErrorState() => const SliverFillRemaining(
-                  child: Center(child: Text('Something went wrong')),
+                Container(
+                  width: 32,
+                  height: 32,
+                  margin: const EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(9999),
+                    border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.4)),
+                    color: const Color(0xFFd41132).withValues(alpha: 0.4),
+                  ),
                 ),
-                Reddit$LoadedState() => SliverFixedExtentList.builder(
-                  itemExtent: 245,
-                  itemCount: state.posts.length,
-                  itemBuilder: (context, index) {
-                    final post = state.posts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ArticleConfigWidget(postId: post.id),
+              ],
+            ),
+            body: SafeArea(
+              child: ListenableBuilder(
+                listenable: redditDataController,
+                builder: (context, child) {
+                  return RefreshIndicator.adaptive(
+                    onRefresh: () async {
+                      await redditController.load(
+                        redditDataController.subreddit,
+                        postType: redditDataController.postType,
+                      );
+                    },
+                    child: CustomScrollView(
+                      controller: scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        // Search Bar
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[900],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFFd41132).withValues(alpha: 0.3),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFd41132).withValues(alpha: 0.15),
+                                    blurRadius: 15,
+                                    offset: Offset.zero,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 16),
+                                    child: Icon(Icons.search, color: Color(0xFFd41132)),
+                                  ),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: searchController,
+                                      style: const TextStyle(color: Colors.white),
+                                      decoration: const InputDecoration(
+                                        hintText: 'Search subreddits',
+                                        hintStyle: TextStyle(color: Colors.grey),
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 12,
+                                        ),
+                                      ),
+                                      onSubmitted: (value) {
+                                        load();
+                                      },
+                                    ),
+                                  ),
+                                  if (searchController.text.isNotEmpty)
+                                    IconButton(
+                                      icon: const Icon(Icons.cancel, color: Colors.grey),
+                                      onPressed: () {
+                                        searchController.clear();
+                                        load();
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      child: _buildPostCard(post, index),
-                    );
-                  },
-                ),
-              },
+                        ),
 
-              if (state is Reddit$LoadedState && state.hasMore)
-                const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator.adaptive()),
-                ),
-            ],
-          ),
-        ),
-      ),
-    ),
+                        // Sort Buttons
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          sliver: SliverGrid.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                              mainAxisExtent: 45,
+                            ),
+                            itemCount: RedditPostType.values.length,
+                            itemBuilder: (context, index) {
+                              final postType = RedditPostType.values[index];
+                              return _buildSortButton(postType);
+                            },
+                          ),
+                        ),
+
+                        // Results Count
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Text(
+                              '${redditDataController.postType.title} articles',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600],
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        switch (state) {
+                          Reddit$InitialState() => const SliverToBoxAdapter(
+                            child: SizedBox.shrink(),
+                          ),
+                          Reddit$LoadingState() => const SliverFillRemaining(
+                            child: Center(child: CircularProgressIndicator.adaptive()),
+                          ),
+                          Reddit$ErrorState() => SliverFillRemaining(
+                            child: Center(child: error_widget.ErrorWidget(onRetry: load)),
+                          ),
+                          Reddit$LoadedState() =>
+                            state.posts.isEmpty
+                                ? const SliverFillRemaining(child: EmptyWidget())
+                                : SliverList.builder(
+                                    itemCount: state.posts.length,
+                                    itemBuilder: (context, index) {
+                                      final post = state.posts[index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ArticleConfigWidget(
+                                                postId: post.id,
+                                                key: ValueKey(post.id),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: _buildPostCard(post, index),
+                                      );
+                                    },
+                                  ),
+                        },
+
+                        if (state is Reddit$LoadedState && state.hasMore)
+                          const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator.adaptive()),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      );
+    },
   );
 
-  Widget _buildSortButton(String text, bool isSelected) => Container(
-    margin: const EdgeInsets.only(right: 8),
+  Widget _buildSortButton(RedditPostType postType) => SizedBox(
+    width: double.infinity,
     child: ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        redditDataController.setPostType(postType);
+        redditController.load(
+          redditDataController.subreddit,
+          postType: redditDataController.postType,
+        );
+      },
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? const Color(0xFFd41132) : Colors.grey[900],
-        foregroundColor: isSelected ? Colors.white : Colors.grey[400],
-        side: isSelected ? null : BorderSide(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(9999),
-          side: BorderSide(
-            color: isSelected ? Colors.transparent : const Color(0xFFd41132).withValues(alpha: 0.2),
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        backgroundColor: postType == redditDataController.postType
+            ? const Color(0xFFd41132)
+            : Colors.grey[900],
+        foregroundColor: postType == redditDataController.postType
+            ? Colors.white
+            : Colors.grey[400],
+        side: postType == redditDataController.postType
+            ? null
+            : BorderSide(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9999)),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       child: Text(
-        text,
+        postType.title,
         style: TextStyle(
           fontSize: 14,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          fontWeight: postType == redditDataController.postType
+              ? FontWeight.bold
+              : FontWeight.normal,
         ),
       ),
     ),
   );
 
   Widget _buildPostCard(RedditPost post, int index) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
     child: DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.grey[900]?.withValues(alpha: 0.3),
@@ -258,11 +263,11 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
         border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.2)),
       ),
       child: Column(
-        mainAxisAlignment: .spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -315,7 +320,10 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
                     ),
-                    const Text('6h ago', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(
+                      'r/${post.subreddit ?? "nosleep"}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -332,8 +340,9 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
               ],
             ),
           ),
+          Container(height: 1, color: const Color(0xFFd41132).withValues(alpha: 0.1)),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

@@ -1,21 +1,27 @@
 import 'package:flutter/foundation.dart';
+import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
+
+const String noSleep = 'nosleep';
+
+const String noSleepTitle = 'NoSleep';
 
 class RedditDataController with ChangeNotifier {
-  String? _selectedSubreddit;
+  /// default subreddit
+  String _subreddit = noSleep;
 
-  String? get selectedSubreddit => _selectedSubreddit;
+  RedditPostType _postType = RedditPostType.newest;
 
-  void setSelectedSubreddit(String? subreddit) {
-    _selectedSubreddit = subreddit;
+  String get subreddit => _subreddit;
+
+  RedditPostType get postType => _postType;
+
+  void setSubreddit(String subreddit) {
+    _subreddit = subreddit;
     notifyListeners();
   }
 
-  String? _currentPostId;
-
-  String? get currentPostId => _currentPostId;
-
-  void setCurrentPostId(String? postId) {
-    _currentPostId = postId;
+  void setPostType(final RedditPostType postType) {
+    _postType = postType;
     notifyListeners();
   }
 }

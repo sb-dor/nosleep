@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_json_converter.dart';
+import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
 
 abstract interface class IRedditRepository {
   Future<({List<RedditPost> posts, String? nextPage})> getPosts(
-    String subreddit, {
-    int limit = 10,
-    String? nextPage,
+    final String subreddit, {
+    final int limit = 10,
+    final RedditPostType postType = RedditPostType.newest,
+    final String? nextPage,
   });
 }
 
@@ -18,12 +20,13 @@ final class RedditRepositoryImpl implements IRedditRepository {
 
   @override
   Future<({List<RedditPost> posts, String? nextPage})> getPosts(
-    String subreddit, {
-    int limit = 10,
-    String? nextPage,
+    final String subreddit, {
+    final int limit = 10,
+    final RedditPostType postType = RedditPostType.newest,
+    final String? nextPage,
   }) async {
     final uri = Uri.parse(
-      'https://www.reddit.com/r/$subreddit/new.json?limit=$limit&after=$nextPage',
+      'https://www.reddit.com/r/$subreddit/${postType.key}.json?limit=$limit&after=$nextPage',
     );
 
     final response = await httpClient.get(uri);
@@ -44,8 +47,6 @@ final class RedditRepositoryImpl implements IRedditRepository {
         for (final child in childrenList) {
           final childMap = child as Map<String, Object?>?;
           final postData = childMap?['data'] as Map<String, Object?>?;
-          print('child list: $postData');
-
           if (postData != null) {
             final post = jsonConverter.fromJson(postData);
             posts.add(post);

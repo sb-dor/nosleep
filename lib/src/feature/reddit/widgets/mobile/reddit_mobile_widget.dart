@@ -1,5 +1,6 @@
 import 'package:control/control.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
@@ -48,14 +49,13 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
         forceMaterialTransparency: true,
         title: const Row(
           children: [
-            Icon(Icons.eighteen_mp, color: Color(0xFFd41132), size: 28),
+            Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132), size: 20),
             SizedBox(width: 8),
             Text(
               'NoSleep',
               style: TextStyle(
                 color: Color(0xFFd41132),
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
                 letterSpacing: 0.5,
               ),
             ),
@@ -91,7 +91,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                       borderRadius: BorderRadius.circular(12),

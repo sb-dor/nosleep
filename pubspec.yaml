@@ -34,7 +34,7 @@ version: 0.0.1+1
 #    path: screenshot_1.png
 
 environment:
-  sdk: '^3.10.4'
+  sdk: '^3.10.7'
 
 # https://dart.dev/tools/pub/workspaces
 workspace:
@@ -102,7 +102,9 @@ dependencies:
     path: ./packages/ui
   drift_flutter: ^0.2.7
   freezed_annotation: ^3.1.0
+  intl_utils: ^2.8.12
   timeago: ^3.7.1
+  font_awesome_flutter: ^10.12.0
 
 dev_dependencies:
   # Unit & Widget tests for Flutter

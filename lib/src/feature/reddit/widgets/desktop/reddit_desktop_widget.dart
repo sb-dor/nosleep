@@ -234,7 +234,14 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> {
             ),
           ),
 
-          if (_selectedPost != null) Expanded(child: _selectedPost!),
+          if (_selectedPost != null)
+            Expanded(child: _selectedPost!)
+          else
+            const Expanded(
+              child: Center(
+                child: Text('Start to read articles clicking on any article from left sidebar'),
+              ),
+            ),
         ],
       ),
     ),

@@ -92,7 +92,7 @@ BEGIN
             VALUE "CompanyName", "www.sbdor.template" "\0"
             VALUE "FileDescription", "no_sleep" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "com.sbdor.template" "\0"
+            VALUE "InternalName", "com.sbdor.nosleep" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 www.sbdor.template. All rights reserved." "\0"
             VALUE "OriginalFilename", "no_sleep.exe" "\0"
             VALUE "ProductName", "no_sleep" "\0"

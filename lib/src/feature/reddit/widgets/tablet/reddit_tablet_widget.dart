@@ -46,16 +46,6 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                   icon: const Icon(Icons.notifications, color: Colors.white, size: 28),
                   onPressed: () {},
                 ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  margin: const EdgeInsets.only(right: 24),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(9999),
-                    border: Border.all(color: const Color(0xFFd41132).withValues(alpha: 0.4)),
-                    color: const Color(0xFFd41132).withValues(alpha: 0.4),
-                  ),
-                ),
               ],
             ),
             body: SafeArea(
@@ -114,9 +104,6 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                                             horizontal: 16,
                                           ),
                                         ),
-                                        onSubmitted: (value) {
-                                          load();
-                                        },
                                       ),
                                     ),
                                     if (searchController.text.isNotEmpty)

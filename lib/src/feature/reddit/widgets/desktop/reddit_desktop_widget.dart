@@ -97,9 +97,6 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                                         horizontal: 12,
                                       ),
                                     ),
-                                    onSubmitted: (value) {
-                                      load();
-                                    },
                                   ),
                                 ),
                                 if (searchController.text.isNotEmpty)

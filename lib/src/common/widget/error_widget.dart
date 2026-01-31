@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ErrorWidget extends StatelessWidget {
-  const ErrorWidget({
-    super.key,
-    required this.onRetry,
-    this.icon,
-    this.title,
-  });
+  const ErrorWidget({super.key, required this.onRetry, this.icon, this.title});
 
   final VoidCallback onRetry;
   final IconData? icon;
@@ -77,7 +72,7 @@ class ErrorWidget extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            TryAgainButton(onPressed: onRetry)
+            TryAgainButton(onPressed: onRetry),
           ],
         ),
       ),
@@ -120,11 +115,7 @@ class _TryAgainButtonState extends State<TryAgainButton> {
             const SizedBox(width: 12),
             Text(
               widget.text ?? 'Try again',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2),
             ),
           ],
         ),
@@ -141,11 +132,7 @@ class NetworkErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ErrorWidget(
-      icon: FontAwesomeIcons.wifi,
-      title: 'Connection Lost',
-      onRetry: onRetry,
-    );
+    return ErrorWidget(icon: FontAwesomeIcons.wifi, title: 'Connection Lost', onRetry: onRetry);
   }
 }
 
@@ -157,11 +144,7 @@ class ServerErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ErrorWidget(
-      icon: FontAwesomeIcons.server,
-      title: 'Server Error',
-      onRetry: onRetry,
-    );
+    return ErrorWidget(icon: FontAwesomeIcons.server, title: 'Server Error', onRetry: onRetry);
   }
 }
 
@@ -188,7 +171,7 @@ class GenericErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ErrorWidget( onRetry: onRetry);
+    return ErrorWidget(onRetry: onRetry);
   }
 }
 

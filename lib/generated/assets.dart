@@ -8,5 +8,4 @@ class Assets {
   static const String launcherIcons1024 = 'assets/launcher_icons/1024.png';
   static const String launcherIconsImage = 'assets/launcher_icons/splash_screen.png';
   static const String launcherIconsPlayStore512 = 'assets/launcher_icons/play_store_512.png';
-
 }

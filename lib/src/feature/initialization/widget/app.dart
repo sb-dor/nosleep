@@ -36,7 +36,7 @@ class _AppState extends State<App> with RouterStateMixin {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    title: 'Avera Web',
+    title: 'NoSleep',
     debugShowCheckedModeBanner: false,
 
     // Router

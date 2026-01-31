@@ -27,10 +27,27 @@ class $AssetsIconsGen {
   List<AssetGenImage> get values => [icon192Maskable, icon192, icon500Transparent];
 }
 
+class $AssetsLauncherIconsGen {
+  const $AssetsLauncherIconsGen();
+
+  /// File path: assets/launcher_icons/1024.png
+  AssetGenImage get a1024 => const AssetGenImage('assets/launcher_icons/1024.png');
+
+  /// File path: assets/launcher_icons/play_store_512.png
+  AssetGenImage get playStore512 => const AssetGenImage('assets/launcher_icons/play_store_512.png');
+
+  /// File path: assets/launcher_icons/splash_screen.png
+  AssetGenImage get splashScreen => const AssetGenImage('assets/launcher_icons/splash_screen.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [a1024, playStore512, splashScreen];
+}
+
 class Assets {
   const Assets._();
 
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsLauncherIconsGen launcherIcons = $AssetsLauncherIconsGen();
 }
 
 class AssetGenImage {

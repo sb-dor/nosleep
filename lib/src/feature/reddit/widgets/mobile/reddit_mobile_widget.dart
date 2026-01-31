@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
 import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
+import 'package:no_sleep/src/feature/notifications/widgets/notifications_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
@@ -28,7 +29,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
           return Scaffold(
             appBar: AppBar(
               forceMaterialTransparency: true,
-              title:  Row(
+              title: Row(
                 children: [
                   const Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132), size: 20),
                   const SizedBox(width: 8),
@@ -45,7 +46,12 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
               actions: [
                 IconButton(
                   icon: const Icon(Icons.notifications, color: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const NotificationsConfigWidget()),
+                    );
+                  },
                 ),
               ],
             ),
@@ -94,7 +100,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
                                       controller: searchController,
                                       style: const TextStyle(color: Colors.white),
                                       decoration: const InputDecoration(
-                                        hintText: 'Search subreddits',
+                                        hintText: 'Search topics',
                                         hintStyle: TextStyle(color: Colors.grey),
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.symmetric(

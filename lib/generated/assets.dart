@@ -6,6 +6,7 @@ class Assets {
   static const String iconsIcon192Maskable = 'assets/icons/icon-192-maskable.png';
   static const String iconsIcon500Transparent = 'assets/icons/icon-500-transparent.png';
   static const String launcherIcons1024 = 'assets/launcher_icons/1024.png';
+  static const String launcherIconsImage = 'assets/launcher_icons/splash_screen.png';
   static const String launcherIconsPlayStore512 = 'assets/launcher_icons/play_store_512.png';
 
 }

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
 import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
+import 'package:no_sleep/src/feature/notifications/widgets/notifications_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
@@ -44,7 +45,12 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
               actions: [
                 IconButton(
                   icon: const Icon(Icons.notifications, color: Colors.white, size: 28),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const NotificationsConfigWidget()),
+                    );
+                  },
                 ),
               ],
             ),
@@ -96,7 +102,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                                         controller: searchController,
                                         style: const TextStyle(color: Colors.white, fontSize: 16),
                                         decoration: const InputDecoration(
-                                          hintText: 'Search subreddits',
+                                          hintText: 'Search topics',
                                           hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.symmetric(

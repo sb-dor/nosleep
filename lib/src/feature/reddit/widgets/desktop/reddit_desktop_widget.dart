@@ -89,7 +89,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                                     controller: searchController,
                                     style: const TextStyle(color: Colors.white),
                                     decoration: const InputDecoration(
-                                      hintText: 'Search subreddits',
+                                      hintText: 'Search topics',
                                       hintStyle: TextStyle(color: Colors.grey),
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.symmetric(

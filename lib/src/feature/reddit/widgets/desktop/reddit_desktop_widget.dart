@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
-import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/logic/reddit_routing_handler.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_state_mixin.dart';
-import 'package:octopus/octopus.dart';
 
 class RedditDesktopWidget extends StatefulWidget {
   const RedditDesktopWidget({super.key});
@@ -24,10 +22,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
   @override
   void initState() {
     super.initState();
-    _desktopRedditRouting = DesktopRedditRouting(
-      redditDataController: redditDataController,
-      redditStateMixin: this,
-    )..findModule(context);
+    _desktopRedditRouting = DesktopRedditRouting(redditStateMixin: this)..findModule(context);
   }
 
   @override
@@ -114,8 +109,9 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                                   IconButton(
                                     icon: const Icon(Icons.cancel, color: Colors.grey),
                                     onPressed: () {
-                                      searchController.clear();
-                                      load();
+                                      setState(() {
+                                        searchController.clear();
+                                      });
                                     },
                                   ),
                               ],

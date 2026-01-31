@@ -12,11 +12,14 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
   late final searchController = TextEditingController();
   Timer? _searchTimer;
   bool _searchEmpty = true;
+  String? _lastSearch;
+
+  String? get _currentSearchControllerValue =>
+      searchController.text.trim().length < 3 ? null : searchController.text.trim();
 
   @override
   void initState() {
     super.initState();
-    redditController.load(redditDataController.subreddit);
     scrollController.addListener(_listener);
     searchController.addListener(_onSearchChange);
   }
@@ -34,6 +37,7 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
 
   void load() {
     redditController.load(redditDataController.subreddit, postType: redditDataController.postType);
+    _lastSearch = _currentSearchControllerValue;
   }
 
   void _listener() {
@@ -48,6 +52,7 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
   void _onSearchChange() {
     _searchTimer?.cancel();
     _searchTimer = Timer(const Duration(seconds: 1), () {
+      if (_lastSearch == searchController.text.trim()) return;
       final textLessThenLength = searchController.text.trim().length < 3;
       if (!_searchEmpty && textLessThenLength) {
         /// load default [nosleep] search

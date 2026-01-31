@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
-import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/notifications/widgets/notifications_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/logic/reddit_routing_handler.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_state_mixin.dart';
-import 'package:octopus/octopus.dart';
 
 class RedditTabletWidget extends StatefulWidget {
   const RedditTabletWidget({super.key});
@@ -25,10 +23,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
   @override
   void initState() {
     super.initState();
-    _mobileRedditRouting = MobileRedditRouting(
-      redditDataController: redditDataController,
-      redditStateMixin: this,
-    )..findModule(context);
+    _mobileRedditRouting = MobileRedditRouting(redditStateMixin: this)..findModule(context);
   }
 
   @override
@@ -133,8 +128,9 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                                           size: 24,
                                         ),
                                         onPressed: () {
-                                          searchController.clear();
-                                          load();
+                                          setState(() {
+                                            searchController.clear();
+                                          });
                                         },
                                       ),
                                   ],

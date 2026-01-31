@@ -12,7 +12,7 @@
 
 server:
   #  host: "localhost" # Defines the binding address <string>
-  host: "192.168.100.82" # Defines the binding address <string>
+  host: "192.168.100.85" # Defines the binding address <string>
   port: 4040 # Specifies the port <int> for the development server
   https:
 #    cert-path: "/path/to/cert.pem" # Path <string> to your TLS certificate

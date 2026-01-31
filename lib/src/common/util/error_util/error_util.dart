@@ -2,9 +2,10 @@
 
 import 'dart:async';
 
-import 'package:no_sleep/src/common/util/error_util/platform/error_util_vm.dart'
-    if (dart.library.html) 'package:no_sleep/src/common/util/platform/error_util_js.dart';
 import 'package:l/l.dart';
+
+import 'package:no_sleep/src/common/util/error_util/platform/error_util_vm.dart'
+    if (dart.library.html) 'package:no_sleep/src/common/util/error_util/platform/error_util_js.dart';
 
 /// Error util.
 abstract final class ErrorUtil {

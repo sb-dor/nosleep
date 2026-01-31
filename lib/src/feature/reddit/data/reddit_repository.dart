@@ -55,6 +55,6 @@ final class RedditRepositoryImpl implements IRedditRepository {
         return (posts: posts, nextPage: nextPage);
       }
     }
-    throw Exception('Failed to load posts: ${response.statusCode}');
+    throw Exception('Failed to load posts: ${response.body}');
   }
 }

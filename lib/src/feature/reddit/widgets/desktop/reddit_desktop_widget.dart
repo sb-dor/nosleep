@@ -2,12 +2,14 @@ import 'package:control/control.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
+import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
 import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
+import 'package:no_sleep/src/feature/reddit/logic/reddit_routing_handler.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_state_mixin.dart';
-import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
+import 'package:octopus/octopus.dart';
 
 class RedditDesktopWidget extends StatefulWidget {
   const RedditDesktopWidget({super.key});
@@ -17,7 +19,16 @@ class RedditDesktopWidget extends StatefulWidget {
 }
 
 class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditStateMixin {
-  Widget? _selectedPost;
+  late final DesktopRedditRouting _desktopRedditRouting;
+
+  @override
+  void initState() {
+    super.initState();
+    _desktopRedditRouting = DesktopRedditRouting(
+      redditDataController: redditDataController,
+      redditStateMixin: this,
+    )..findModule(context);
+  }
 
   @override
   Widget build(BuildContext context) => StateConsumer<RedditController, RedditState>(
@@ -134,18 +145,22 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                       // Popular Subreddits
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '${redditDataController.postType.title} articles',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[600],
-                                letterSpacing: 1.5,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${redditDataController.postType.title} articles',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[600],
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
                               ),
-                            ),
+                              IconButton(onPressed: load, icon: const Icon(Icons.refresh)),
+                            ],
                           ),
                         ),
                       ),
@@ -170,12 +185,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                                       cursor: SystemMouseCursors.click,
                                       child: GestureDetector(
                                         onTap: () {
-                                          setState(() {
-                                            _selectedPost = ArticleConfigWidget(
-                                              postId: post.id,
-                                              key: ValueKey(post.id),
-                                            );
-                                          });
+                                          _desktopRedditRouting.navigateTo(context, post.id);
                                         },
                                         child: _buildSidebarPostItem(post, index),
                                       ),
@@ -195,14 +205,21 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
             },
           ),
 
-          if (_selectedPost != null)
-            Expanded(child: _selectedPost!)
-          else
-            const Expanded(
+          ListenableBuilder(
+            listenable: redditDataController,
+            child: const Expanded(
               child: Center(
                 child: Text('Start to read articles clicking on any article from left sidebar'),
               ),
             ),
+            builder: (context, child) {
+              if (redditDataController.desktopSelectedArticle != null) {
+                return Expanded(child: redditDataController.desktopSelectedArticle!);
+              } else {
+                return child!;
+              }
+            },
+          ),
         ],
       ),
     ),

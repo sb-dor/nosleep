@@ -156,15 +156,26 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     String path, {
     Map<String, String?>? queryParameters,
     Map<String, String>? headers,
-  }) => _sendUnstreamed(
-    handler: _handler,
-    method: 'GET',
-    url: _mergePath(_baseUrl, path),
-    queryParameters: queryParameters,
-    headers: headers,
-    body: null,
-    context: <String, Object?>{},
-  );
+    Duration timeout = const Duration(seconds: 30),
+  }) =>
+      _sendUnstreamed(
+        handler: _handler,
+        method: 'GET',
+        url: _mergePath(_baseUrl, path),
+        queryParameters: queryParameters,
+        headers: headers,
+        body: null,
+        context: <String, Object?>{},
+      ).timeout(
+        timeout,
+        onTimeout: () => throw APIClientException$Network(
+          code: 'timeout_error',
+          message: 'Request timed out after ${timeout.inSeconds} seconds.',
+          statusCode: 0,
+          error: TimeoutException('Request timeout'),
+          data: null,
+        ),
+      );
 
   /// Sends a POST request to the given [path].
   Future<APIClientResponse> post(
@@ -224,30 +235,52 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     Map<String, String>? headers,
     Map<String, String?>? queryParameters,
     Map<String, Object?>? body,
-  }) => _sendUnstreamed(
-    handler: _handler,
-    method: 'PUT',
-    url: _mergePath(_baseUrl, path),
-    queryParameters: queryParameters,
-    headers: headers,
-    body: body,
-    context: <String, Object?>{},
-  );
+    Duration timeout = const Duration(seconds: 30),
+  }) =>
+      _sendUnstreamed(
+        handler: _handler,
+        method: 'PUT',
+        url: _mergePath(_baseUrl, path),
+        queryParameters: queryParameters,
+        headers: headers,
+        body: body,
+        context: <String, Object?>{},
+      ).timeout(
+        timeout,
+        onTimeout: () => throw APIClientException$Network(
+          code: 'timeout_error',
+          message: 'Request timed out after ${timeout.inSeconds} seconds.',
+          statusCode: 0,
+          error: TimeoutException('Request timeout'),
+          data: null,
+        ),
+      );
 
   Future<APIClientResponse> delete(
     String path, {
     Map<String, String>? headers,
     Map<String, String?>? queryParameters,
     Map<String, Object?>? body,
-  }) => _sendUnstreamed(
-    handler: _handler,
-    method: 'DELETE',
-    url: _mergePath(_baseUrl, path),
-    queryParameters: queryParameters,
-    headers: headers,
-    body: body,
-    context: <String, Object?>{},
-  );
+    Duration timeout = const Duration(seconds: 30),
+  }) =>
+      _sendUnstreamed(
+        handler: _handler,
+        method: 'DELETE',
+        url: _mergePath(_baseUrl, path),
+        queryParameters: queryParameters,
+        headers: headers,
+        body: body,
+        context: <String, Object?>{},
+      ).timeout(
+        timeout,
+        onTimeout: () => throw APIClientException$Network(
+          code: 'timeout_error',
+          message: 'Request timed out after ${timeout.inSeconds} seconds.',
+          statusCode: 0,
+          error: TimeoutException('Request timeout'),
+          data: null,
+        ),
+      );
 }
 
 /// Creates a new [ApiClientHandler] from the given [internalClient] and [middleware].
@@ -328,16 +361,45 @@ ApiClientHandler _createHandler(
                 data: null,
               );
             case > 399:
+              var body = <String, Object?>{};
+              try {
+                final bytes = await streamedResponse.stream.toBytes();
+                body = bytes.isEmpty ? <String, Object?>{} : jsonDecoder.convert(bytes);
+              } on Object catch (error, stackTrace) {
+                throwError(completer, error, stackTrace);
+              }
               l
                 ..e('---Incorrect server error')
                 ..e('---Server statusCode: ${streamedResponse.statusCode}')
-                ..e('---Reason: ${streamedResponse.reasonPhrase}');
-              break;
+                ..e('---Reason: ${streamedResponse.reasonPhrase}')
+                ..e('---Body: $body');
+              throw APIClientException$400(
+                code: 'Client exception',
+                message: 'Something went wrong with the client',
+                statusCode: statusCode,
+                error: body,
+                data: null,
+              );
             case > 299:
+              var body = <String, Object?>{};
+              try {
+                final bytes = await streamedResponse.stream.toBytes();
+                body = bytes.isEmpty ? <String, Object?>{} : jsonDecoder.convert(bytes);
+              } on Object catch (error, stackTrace) {
+                throwError(completer, error, stackTrace);
+              }
               l
                 ..e('---Incorrect server error')
                 ..e('---Server statusCode: ${streamedResponse.statusCode}')
-                ..e('---Reason: ${streamedResponse.reasonPhrase}');
+                ..e('---Reason: ${streamedResponse.reasonPhrase}')
+                ..e('---Body: $body');
+              throw APIClientException$300(
+                code: 'Redirection exception',
+                message: 'Server was redirected',
+                statusCode: statusCode,
+                error: body,
+                data: null,
+              );
             default:
               break;
           }
@@ -528,6 +590,56 @@ final class APIClientException$Network extends APIClientException {
 /// Authorization exception.
 final class APIClientException$Authorization extends APIClientException {
   const APIClientException$Authorization({
+    required this.code,
+    required this.message,
+    required this.statusCode,
+    this.error,
+    this.data,
+  });
+
+  @override
+  final String code;
+
+  @override
+  final String message;
+
+  @override
+  final int statusCode;
+
+  @override
+  final Object? error;
+
+  @override
+  final Object? data;
+}
+
+final class APIClientException$400 extends APIClientException {
+  const APIClientException$400({
+    required this.code,
+    required this.message,
+    required this.statusCode,
+    this.error,
+    this.data,
+  });
+
+  @override
+  final String code;
+
+  @override
+  final String message;
+
+  @override
+  final int statusCode;
+
+  @override
+  final Object? error;
+
+  @override
+  final Object? data;
+}
+
+final class APIClientException$300 extends APIClientException {
+  const APIClientException$300({
     required this.code,
     required this.message,
     required this.statusCode,

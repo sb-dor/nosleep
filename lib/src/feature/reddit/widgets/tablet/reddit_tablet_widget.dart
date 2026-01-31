@@ -6,9 +6,11 @@ import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
 import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/notifications/widgets/notifications_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
+import 'package:no_sleep/src/feature/reddit/logic/reddit_routing_handler.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_state_mixin.dart';
+import 'package:octopus/octopus.dart';
 
 class RedditTabletWidget extends StatefulWidget {
   const RedditTabletWidget({super.key});
@@ -18,6 +20,17 @@ class RedditTabletWidget extends StatefulWidget {
 }
 
 class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStateMixin {
+  late final MobileRedditRouting _mobileRedditRouting;
+
+  @override
+  void initState() {
+    super.initState();
+    _mobileRedditRouting = MobileRedditRouting(
+      redditDataController: redditDataController,
+      redditStateMixin: this,
+    )..findModule(context);
+  }
+
   @override
   Widget build(BuildContext context) => StateConsumer<RedditController, RedditState>(
     controller: redditController,
@@ -202,15 +215,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                                         final post = state.posts[index];
                                         return GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => ArticleConfigWidget(
-                                                  postId: post.id,
-                                                  key: ValueKey(post.id),
-                                                ),
-                                              ),
-                                            );
+                                            _mobileRedditRouting.navigateTo(context, post.id);
                                           },
                                           child: _buildPostCard(post, index),
                                         );

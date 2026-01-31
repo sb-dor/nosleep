@@ -6,9 +6,9 @@ import 'package:no_sleep/src/feature/reddit/widgets/reddit_config_widget.dart';
 import 'package:octopus/octopus.dart';
 
 enum Routes with OctopusRoute {
-  initialization('initialization'),
-  nosleep('nosleep', title: 'Sign-In'),
-  developer('developer');
+  initialization('initialization', title: 'Initialization'),
+  nosleep('nosleep', title: 'NoSleep'),
+  developer('developer', title: 'Developer');
 
   const Routes(this.name, {this.title});
 

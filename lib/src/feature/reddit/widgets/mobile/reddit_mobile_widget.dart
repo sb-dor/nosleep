@@ -23,9 +23,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
   @override
   void initState() {
     super.initState();
-    _mobileRedditRouting = MobileRedditRouting(
-      redditStateMixin: this,
-    )..findModule(context);
+    _mobileRedditRouting = MobileRedditRouting(redditStateMixin: this)..findModule(context);
   }
 
   @override

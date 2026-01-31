@@ -11,7 +11,7 @@ class _NotificationsConfigWidgetState extends State<NotificationsConfigWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('Notifications')),
       body: const Center(child: Text('Empty notifications')),
     );
   }

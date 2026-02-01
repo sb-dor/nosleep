@@ -45,11 +45,8 @@ class ArticleConfigWidgetState extends State<ArticleConfigWidget> {
   @override
   void initState() {
     super.initState();
-    final dependencies = DependenciesScope.of(context);
     articleController = ArticleController(
-      articleRepository: kIsWeb || kIsWasm
-          ? ArticleJSRepositoryImpl(apiClient: dependencies.apiClient)
-          : ArticleRepositoryImpl(apiClient: dependencies.apiClient),
+      articleRepository: kIsWeb || kIsWasm ? ArticleJSRepositoryImpl() : ArticleRepositoryImpl(),
     );
     articleController.article(widget.postId);
   }

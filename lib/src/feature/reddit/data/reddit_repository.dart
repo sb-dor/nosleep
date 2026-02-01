@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:no_sleep/src/common/util/api_client.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_json_converter.dart';
@@ -19,7 +17,7 @@ final class RedditRepositoryImpl implements IRedditRepository {
 
   final ApiClient apiClient;
 
-  /// AI generated code - should be rewrote
+  /// AI generated code - should be rewritten
   @override
   Future<({List<RedditPost> posts, String? nextPage})> getPosts(
     final String subreddit, {
@@ -64,7 +62,7 @@ final class RedditJSRepositoryImpl implements IRedditRepository {
 
   final ApiClient apiClient;
 
-  /// AI generated code - should be rewrote
+  /// AI generated code - should be rewritten
   @override
   Future<({List<RedditPost> posts, String? nextPage})> getPosts(
     final String subreddit, {
@@ -73,8 +71,9 @@ final class RedditJSRepositoryImpl implements IRedditRepository {
     final String? nextPage,
   }) async {
     final response = await apiClient.get(
-      '',
+      '/posts',
       queryParameters: <String, String?>{
+        'subreddit': subreddit.trim(),
         'limit': limit.toString(),
         'type': postType.key,
         'after': nextPage,

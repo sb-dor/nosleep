@@ -32,7 +32,7 @@ class _ArticleMobileWidgetState extends State<ArticleMobileWidget> {
       body: SafeArea(
         child: ListenableBuilder(
           listenable: _controller,
-          builder: (_, __) {
+          builder: (_, _) {
             final state = _controller.state;
 
             return switch (state) {

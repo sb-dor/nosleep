@@ -13,9 +13,10 @@ final class ArticleRepositoryImpl implements IArticleRepository {
 
   final http.Client _httpClient;
 
+  /// AI generated code - should be rewrote
   @override
   Future<Article> article(final String postId) async {
-    final uri = Uri.parse('https://www.reddit.com/comments/$postId.json');
+    final uri = Uri.parse('https://api.reddit.com/comments/$postId.json');
     final response = await _httpClient.get(uri);
 
     if (response.statusCode != 200) {

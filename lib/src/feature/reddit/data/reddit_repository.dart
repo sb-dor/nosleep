@@ -18,6 +18,7 @@ final class RedditRepositoryImpl implements IRedditRepository {
 
   final http.Client httpClient;
 
+  /// AI generated code - should be rewrote
   @override
   Future<({List<RedditPost> posts, String? nextPage})> getPosts(
     final String subreddit, {
@@ -26,7 +27,7 @@ final class RedditRepositoryImpl implements IRedditRepository {
     final String? nextPage,
   }) async {
     final uri = Uri.parse(
-      'https://www.reddit.com/r/$subreddit/${postType.key}.json?limit=$limit&after=$nextPage',
+      'https://api.reddit.com/r/$subreddit/${postType.key}.json?limit=$limit&after=$nextPage',
     );
 
     final response = await httpClient.get(uri);

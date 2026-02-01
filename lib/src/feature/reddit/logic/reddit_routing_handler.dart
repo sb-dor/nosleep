@@ -27,6 +27,7 @@ sealed class RedditRoutingHandler {
       );
     } else {
       showDialog(
+        useSafeArea: false,
         context: context,
         builder: (context) => Material(
           child: ArticleConfigWidget(postId: id, key: ValueKey(id)),

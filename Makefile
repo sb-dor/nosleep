@@ -194,7 +194,7 @@ build-windows: flutter-clean generate ## Build the windows app
 
 .PHONY: build-web
 build-web: flutter-clean generate
-	@flutter build web --release --dart-define-from-file=config/production.json
+	@flutter build web --release --dart-define-from-file=config/web_production.json
 
 .PHONY: firebase-deploy
 firebase-deploy: build-web

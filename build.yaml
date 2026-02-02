@@ -18,3 +18,7 @@ targets:
           mutable_classes: false
           sqlite:
             version: "3.41"
+      freezed:
+        generate_for:
+          - lib/src/feature/**/controller/*.dart
+

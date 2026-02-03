@@ -150,7 +150,7 @@ class _PostBody extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Text(post.selftext!, style: const TextStyle(fontSize: 14, height: 1.5));
+    return SelectableText(post.selftext!, style: const TextStyle(fontSize: 14, height: 1.5));
   }
 }
 

@@ -23,6 +23,10 @@ abstract final class Config {
     defaultValue: 'https://api.domain.tld',
   );
 
+  static const String githubToken = String.fromEnvironment('GITHUB_TOKEN', defaultValue: '');
+  static const String githubOwner = String.fromEnvironment('GITHUB_OWNER', defaultValue: '');
+  static const String githubRepo = String.fromEnvironment('GITHUB_REPO', defaultValue: '');
+
   /// Timeout in milliseconds for opening url.
   /// [Dio] will throw the [DioException] with [DioExceptionType.connectTimeout] type when time out.
   /// e.g. 15000

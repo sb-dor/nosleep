@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart' show State, StatefulWidget, ValueNotifier;
 import 'package:no_sleep/src/common/router/routes.dart';
-import 'package:no_sleep/src/feature/initialization/models/dependencies.dart';
 import 'package:octopus/octopus.dart';
 
 mixin RouterStateMixin<T extends StatefulWidget> on State<T> {

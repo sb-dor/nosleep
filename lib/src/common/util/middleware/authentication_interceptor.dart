@@ -1,5 +1,5 @@
-import 'package:no_sleep/src/common/util/api_client.dart';
 import 'package:l/l.dart';
+import 'package:no_sleep/src/common/util/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationInterceptor {

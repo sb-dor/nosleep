@@ -1,13 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:no_sleep/src/common/util/screen_util.dart';
 import 'package:no_sleep/src/feature/article/controller/article_controller.dart';
 import 'package:no_sleep/src/feature/article/data/article_repository.dart';
 import 'package:no_sleep/src/feature/article/widgets/desktop/article_desktop_widget.dart';
 import 'package:no_sleep/src/feature/article/widgets/mobile/article_mobile_widget.dart';
 import 'package:no_sleep/src/feature/article/widgets/tablet/article_tablet_widget.dart';
-import 'package:no_sleep/src/feature/initialization/widget/dependencies_scope.dart';
 
 class ArticleConfigInhWidget extends InheritedWidget {
   const ArticleConfigInhWidget({super.key, required this.state, required super.child});

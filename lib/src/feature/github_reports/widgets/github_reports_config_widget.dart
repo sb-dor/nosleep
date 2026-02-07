@@ -39,7 +39,6 @@ class GithubReportsConfigWidgetState extends State<GithubReportsConfigWidget> {
   late final GithubReportsController githubReportsController;
   late final GithubReportsDataController githubReportsDataController;
 
-
   @override
   void initState() {
     super.initState();
@@ -59,12 +58,12 @@ class GithubReportsConfigWidgetState extends State<GithubReportsConfigWidget> {
   @override
   Widget build(BuildContext context) {
     return GithubReportsConfigInhWidget(
-            state: this,
-            child: context.screenSizeMaybeWhen(
-              orElse: () => const GithubReportsDesktopWidget(),
-              phone: () => const GithubReportsMobileWidget(),
-              tablet: () => const GithubReportsTabletWidget(),
-            ),
-          );
+      state: this,
+      child: context.screenSizeMaybeWhen(
+        orElse: () => const GithubReportsDesktopWidget(),
+        phone: () => const GithubReportsMobileWidget(),
+        tablet: () => const GithubReportsTabletWidget(),
+      ),
+    );
   }
 }

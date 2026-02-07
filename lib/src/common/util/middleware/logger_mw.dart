@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
-import 'package:no_sleep/src/common/util/api_client.dart';
 import 'package:meta/meta.dart';
+import 'package:no_sleep/src/common/util/api_client.dart';
 
 @immutable
 class ApiClient$LoggerMiddleware {

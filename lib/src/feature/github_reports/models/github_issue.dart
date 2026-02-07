@@ -47,9 +47,7 @@ class GithubIssue {
       title: json['title'] as String,
       body: json['body'] as String?,
       user: json['user'],
-      labels: json['labels'] != null
-          ? (json['labels'] as List<dynamic>).cast<dynamic>()
-          : null,
+      labels: json['labels'] != null ? (json['labels'] as List<dynamic>).cast<dynamic>() : null,
       assignee: json['assignee'],
       assignees: json['assignees'] != null
           ? (json['assignees'] as List<dynamic>).cast<dynamic>()
@@ -59,9 +57,7 @@ class GithubIssue {
       activeLockReason: json['active_lock_reason'] as String?,
       comments: json['comments'] as int,
       pullRequest: json['pull_request'],
-      closedAt: json['closed_at'] != null
-          ? DateTime.parse(json['closed_at'] as String)
-          : null,
+      closedAt: json['closed_at'] != null ? DateTime.parse(json['closed_at'] as String) : null,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       closedBy: json['closed_by'],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
+import 'package:no_sleep/src/feature/github_reports/widgets/github_reports_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/logic/reddit_routing_handler.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
@@ -51,14 +52,25 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                             children: [
                               const Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132)),
                               const SizedBox(width: 8),
-                              Text(
-                                redditDataController.subreddit,
-                                style: const TextStyle(
-                                  color: Color(0xFFd41132),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  letterSpacing: 0.5,
+                              Expanded(
+                                child: Text(
+                                  redditDataController.subreddit,
+                                  style: const TextStyle(
+                                    color: Color(0xFFd41132),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.error_outline, color: Colors.white),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const GithubReportsConfigWidget(),
+                                  );
+                                },
                               ),
                             ],
                           ),

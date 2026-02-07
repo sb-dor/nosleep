@@ -1,5 +1,5 @@
-import 'package:no_sleep/src/common/localization/localization.dart';
 import 'package:intl/intl.dart';
+import 'package:no_sleep/src/common/localization/localization.dart';
 
 extension ExtensionsForString on String {
   String limit(int length) => length < this.length ? substring(0, length) : this;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:no_sleep/src/feature/article/widgets/article_config_widget.dart';
 import 'package:no_sleep/src/feature/developer/widget/developer_screen.dart';
 import 'package:no_sleep/src/feature/home/widgets/home_widget.dart';
 import 'package:no_sleep/src/feature/reddit/widgets/reddit_config_widget.dart';

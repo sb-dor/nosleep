@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:no_sleep/src/common/util/error_util/error_util.dart';
 import 'package:l/l.dart';
+import 'package:no_sleep/src/common/util/error_util/error_util.dart';
 import 'package:platform_info/platform_info.dart';
 
 /// Catch all application errors and logs.

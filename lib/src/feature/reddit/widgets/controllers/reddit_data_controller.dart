@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';
 

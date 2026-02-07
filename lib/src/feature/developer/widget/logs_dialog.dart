@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:l/l.dart';
 import 'package:no_sleep/src/common/util/date_util.dart';
 import 'package:no_sleep/src/feature/initialization/models/dependencies.dart';
-import 'package:l/l.dart';
 import 'package:octopus/octopus.dart';
 
 /// {@template logs_dialog}

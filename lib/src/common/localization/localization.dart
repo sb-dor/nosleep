@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 import 'package:no_sleep/src/common/localization/generated/l10n.dart'
     as generated
     show GeneratedLocalization, AppLocalizationDelegate;
-import 'package:meta/meta.dart';
 
 /// Localization.
 final class Localization extends generated.GeneratedLocalization {

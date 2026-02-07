@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
+import 'package:no_sleep/src/feature/github_reports/widgets/github_reports_config_widget.dart';
 import 'package:no_sleep/src/feature/notifications/widgets/notifications_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/logic/reddit_routing_handler.dart';
@@ -52,11 +53,20 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.notifications, color: Colors.white, size: 28),
+                  icon: const Icon(Icons.notifications, color: Color(0xFFd41132), size: 28),
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const NotificationsConfigWidget()),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.error_outline, color: Color(0xFFd41132)),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const GithubReportsConfigWidget(),
                     );
                   },
                 ),

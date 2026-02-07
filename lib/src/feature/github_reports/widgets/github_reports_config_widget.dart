@@ -39,6 +39,9 @@ class GithubReportsConfigWidgetState extends State<GithubReportsConfigWidget> {
   late final GithubReportsController githubReportsController;
   late final GithubReportsDataController githubReportsDataController;
 
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController bodyController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +55,8 @@ class GithubReportsConfigWidgetState extends State<GithubReportsConfigWidget> {
   void dispose() {
     githubReportsController.dispose();
     githubReportsDataController.dispose();
+    titleController.dispose();
+    bodyController.dispose();
     super.dispose();
   }
 

@@ -54,7 +54,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.notifications, color: Colors.white),
+                  icon: const Icon(Icons.notifications, color: Color(0xFFd41132), size: 28),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -63,7 +63,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.error_outline, color: Colors.white),
+                  icon: const Icon(Icons.error_outline, color: Color(0xFFd41132)),
                   onPressed: () {
                     showDialog(
                       context: context,

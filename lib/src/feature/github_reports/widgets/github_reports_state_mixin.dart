@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:no_sleep/src/common/util/url_launcher_helper.dart';
 import 'package:no_sleep/src/feature/github_reports/controller/github_reports_controller.dart';
 import 'package:no_sleep/src/feature/github_reports/widgets/github_reports_config_widget.dart';
 
@@ -156,7 +157,7 @@ mixin GithubReportsStateMixin<W extends StatefulWidget> on State<W> {
           padding: const EdgeInsets.only(top: 10),
           child: GestureDetector(
             onTap: () {
-              // Could add URL launcher here
+              UrlLauncherHelper().openUrl(state.issue.htmlUrl);
             },
             child: Container(
               padding: const EdgeInsets.all(8),

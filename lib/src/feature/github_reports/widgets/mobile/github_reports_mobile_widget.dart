@@ -61,204 +61,214 @@ class _GithubReportsMobileWidgetState extends State<GithubReportsMobileWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _githubReportsDataController,
-      builder: (context, child) {
-        return Scaffold(
-          backgroundColor: const Color(0xFF0a0505),
-          appBar: AppBar(
-            forceMaterialTransparency: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
+    return Scaffold(
+      backgroundColor: const Color(0xFF0a0505),
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Row(
+          children: [
+            Icon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 20),
+            SizedBox(width: 12),
+            Text(
+              'Report Issue',
+              style: TextStyle(
+                color: Color(0xFFd41132),
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
-            title: const Row(
-              children: [
-                Icon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 20),
-                SizedBox(width: 12),
-                Text(
-                  'Report Issue',
-                  style: TextStyle(
-                    color: Color(0xFFd41132),
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: CustomScrollView(
+            slivers: [
+              // Issue Title Section
+              SliverToBoxAdapter(child: _buildSectionHeader('ISSUE TITLE', Icons.title)),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+              SliverToBoxAdapter(
+                child: _buildTextField(
+                  controller: _titleController,
+                  hintText: 'Enter issue title...',
+                  maxLines: 2,
                 ),
-              ],
-            ),
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Issue Title Section
-                  _buildSectionHeader('ISSUE TITLE', Icons.title),
-                  const SizedBox(height: 12),
-                  _buildTextField(
-                    controller: _titleController,
-                    hintText: 'Enter issue title...',
-                    maxLines: 2,
-                  ),
+              ),
 
-                  const SizedBox(height: 24),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                  // Issue Description Section
-                  _buildSectionHeader('DESCRIPTION', Icons.description_outlined),
-                  const SizedBox(height: 12),
-                  _buildTextField(
-                    controller: _bodyController,
-                    hintText: 'Describe the issue in detail...',
-                    maxLines: 8,
-                  ),
+              // Issue Description Section
+              SliverToBoxAdapter(
+                child: _buildSectionHeader('DESCRIPTION', Icons.description_outlined),
+              ),
 
-                  const SizedBox(height: 24),
+              const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
-                  // Labels Section
-                  _buildSectionHeader('LABELS', Icons.label_outline),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _availableLabels.map((label) {
-                      final isSelected = _selectedLabels.contains(label);
-                      return _buildLabelChip(label, isSelected);
-                    }).toList(),
-                  ),
+              SliverToBoxAdapter(
+                child: _buildTextField(
+                  controller: _bodyController,
+                  hintText: 'Describe the issue in detail...',
+                  maxLines: 8,
+                ),
+              ),
 
-                  const SizedBox(height: 32),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                  // Submit Button & Status
-                  StateConsumer<GithubReportsController, GithubReportsState>(
-                    controller: _githubReportsController,
-                    builder: (context, state, child) {
-                      return Column(
-                        children: [
-                          // Submit Button
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed:
-                                  state is GithubReports$InProgressState ||
-                                      state is GithubReports$SuccessState
-                                  ? null
-                                  : _submitIssue,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFd41132),
-                                foregroundColor: Colors.white,
-                                disabledBackgroundColor: Colors.grey[800],
-                                disabledForegroundColor: Colors.grey[600],
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 0,
+              // Labels Section
+              SliverToBoxAdapter(child: _buildSectionHeader('LABELS', Icons.label_outline)),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+              SliverToBoxAdapter(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _availableLabels.map((label) {
+                    final isSelected = _selectedLabels.contains(label);
+                    return _buildLabelChip(label, isSelected);
+                  }).toList(),
+                ),
+              ),
+
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+              // Submit Button & Status
+              StateConsumer<GithubReportsController, GithubReportsState>(
+                controller: _githubReportsController,
+                builder: (context, state, child) {
+                  return SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        // Submit Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed:
+                                state is GithubReports$InProgressState ||
+                                    state is GithubReports$SuccessState
+                                ? null
+                                : _submitIssue,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFd41132),
+                              foregroundColor: Colors.white,
+                              disabledBackgroundColor: Colors.grey[800],
+                              disabledForegroundColor: Colors.grey[600],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: state is GithubReports$InProgressState
-                                  ? const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        Text(
-                                          'CREATING ISSUE...',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : const Text(
-                                      'CREATE ISSUE',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
+                              elevation: 0,
                             ),
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          // Status Messages
-                          if (state is GithubReports$ErrorState)
-                            _buildStatusCard(
-                              icon: Icons.error_outline,
-                              title: 'ERROR',
-                              message: state.message,
-                              color: const Color(0xFFd41132),
-                            )
-                          else if (state is GithubReports$SuccessState)
-                            _buildStatusCard(
-                              icon: Icons.check_circle_outline,
-                              title: 'SUCCESS',
-                              message: 'Issue created: ${state.issue.title}',
-                              color: const Color(0xFF32d456),
-                              extraWidget: Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // Could add URL launcher here
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF32d456).withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: const Color(0xFF32d456).withValues(alpha: 0.3),
+                            child: state is GithubReports$InProgressState
+                                ? const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          FontAwesomeIcons.github,
-                                          color: Color(0xFF32d456),
-                                          size: 16,
+                                      SizedBox(width: 12),
+                                      Text(
+                                        'CREATING ISSUE...',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1.2,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            state.issue.htmlUrl,
-                                            style: const TextStyle(
-                                              color: Color(0xFF32d456),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  )
+                                : const Text(
+                                    'CREATE ISSUE',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Status Messages
+                        if (state is GithubReports$ErrorState)
+                          _buildStatusCard(
+                            icon: Icons.error_outline,
+                            title: 'ERROR',
+                            message: state.message,
+                            color: const Color(0xFFd41132),
+                          )
+                        else if (state is GithubReports$SuccessState)
+                          _buildStatusCard(
+                            icon: Icons.check_circle_outline,
+                            title: 'SUCCESS',
+                            message: 'Issue created: ${state.issue.title}',
+                            color: const Color(0xFF32d456),
+                            extraWidget: Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Could add URL launcher here
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF32d456).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: const Color(0xFF32d456).withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        FontAwesomeIcons.github,
+                                        color: Color(0xFF32d456),
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          state.issue.htmlUrl,
+                                          style: const TextStyle(
+                                            color: Color(0xFF32d456),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        const Icon(
-                                          Icons.open_in_new,
-                                          color: Color(0xFF32d456),
-                                          size: 16,
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      const Icon(
+                                        Icons.open_in_new,
+                                        color: Color(0xFF32d456),
+                                        size: 16,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+                          ),
+                      ],
+                    ),
+                  );
+                },
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

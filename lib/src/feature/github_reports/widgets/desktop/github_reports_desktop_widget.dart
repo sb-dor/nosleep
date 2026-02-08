@@ -24,10 +24,6 @@ class _GithubReportsDesktopWidgetState extends State<GithubReportsDesktopWidget>
           backgroundColor: const Color(0xFF0a0505),
           appBar: AppBar(
             forceMaterialTransparency: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
             title: const Row(
               children: [
                 Icon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 28),

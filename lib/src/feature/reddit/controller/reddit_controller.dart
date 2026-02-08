@@ -37,7 +37,10 @@ final class RedditController extends StateController<RedditState> with Sequentia
     final String subreddit, {
     final RedditPostType postType = RedditPostType.newest,
     final int limit = 10,
+    final bool reload = false,
   }) => handle(() async {
+    if (state is Reddit$LoadedState && !reload) return;
+
     setState(const RedditState.loading());
 
     final data = await _redditRepository.getPosts(subreddit, limit: limit, postType: postType);

@@ -35,8 +35,12 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
-  void load() {
-    redditController.load(redditDataController.subreddit, postType: redditDataController.postType);
+  void load({final bool reload = false}) {
+    redditController.load(
+      redditDataController.subreddit,
+      postType: redditDataController.postType,
+      reload: reload,
+    );
     _lastSearch = _currentSearchControllerValue;
   }
 

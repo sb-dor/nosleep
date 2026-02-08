@@ -183,7 +183,10 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                                   ),
                                 ),
                               ),
-                              IconButton(onPressed: load, icon: const Icon(Icons.refresh)),
+                              IconButton(
+                                onPressed: () => load(reload: true),
+                                icon: const Icon(Icons.refresh),
+                              ),
                             ],
                           ),
                         ),
@@ -195,7 +198,9 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                           child: Center(child: CircularProgressIndicator.adaptive()),
                         ),
                         Reddit$ErrorState() => SliverFillRemaining(
-                          child: Center(child: error_widget.ErrorWidget(onRetry: load)),
+                          child: Center(
+                            child: error_widget.ErrorWidget(onRetry: () => load(reload: true)),
+                          ),
                         ),
                         Reddit$LoadedState() =>
                           state.posts.isEmpty

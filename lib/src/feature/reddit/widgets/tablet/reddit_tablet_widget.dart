@@ -78,10 +78,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                 builder: (context, child) {
                   return RefreshIndicator.adaptive(
                     onRefresh: () async {
-                      await redditController.load(
-                        redditDataController.subreddit,
-                        postType: redditDataController.postType,
-                      );
+                      load(reload: true);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 48),
@@ -204,7 +201,9 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                               child: Center(child: CircularProgressIndicator.adaptive()),
                             ),
                             Reddit$ErrorState() => SliverFillRemaining(
-                              child: Center(child: error_widget.ErrorWidget(onRetry: load)),
+                              child: Center(
+                                child: error_widget.ErrorWidget(onRetry: () => load(reload: true)),
+                              ),
                             ),
                             Reddit$LoadedState() =>
                               state.posts.isEmpty

@@ -53,6 +53,7 @@ reports/
 # FVM Version Cache
 .fvm/
 
+.firebase
 firebase.json
 *.freezed.dart
 *.g.dart

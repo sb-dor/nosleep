@@ -8,10 +8,10 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
   late final _redditInhWidget = RedditConfigInhWidget.of(context);
   late final redditController = _redditInhWidget.redditController;
   late final redditDataController = _redditInhWidget.redditDataController;
-  late final scrollController = ScrollController();
-  late final searchController = TextEditingController();
+  late final scrollController = _redditInhWidget.scrollController;
+  late final searchController = _redditInhWidget.searchController;
+
   Timer? _searchTimer;
-  bool _searchEmpty = true;
   String? _lastSearch;
 
   String? get _currentSearchControllerValue =>
@@ -20,18 +20,15 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
   @override
   void initState() {
     super.initState();
+    _lastSearch = _currentSearchControllerValue;
     scrollController.addListener(_listener);
     searchController.addListener(_onSearchChange);
   }
 
   @override
   void dispose() {
-    scrollController
-      ..removeListener(_listener)
-      ..dispose();
-    searchController
-      ..removeListener(_onSearchChange)
-      ..dispose();
+    scrollController.removeListener(_listener);
+    searchController.removeListener(_onSearchChange);
     super.dispose();
   }
 
@@ -56,19 +53,17 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
   void _onSearchChange() {
     _searchTimer?.cancel();
     _searchTimer = Timer(const Duration(seconds: 1), () {
-      if (_lastSearch == searchController.text.trim()) return;
+      if (_lastSearch == _currentSearchControllerValue) return;
       final textLessThenLength = searchController.text.trim().length < 3;
-      if (!_searchEmpty && textLessThenLength) {
+      if (textLessThenLength) {
         /// load default [nosleep] search
         redditDataController.setSubreddit(noSleep);
-        load();
-        _searchEmpty = true;
+        load(reload: true);
         return;
       }
       if (textLessThenLength) return;
-      _searchEmpty = false;
       redditDataController.setSubreddit(searchController.text.trim());
-      load();
+      load(reload: true);
     });
   }
 }

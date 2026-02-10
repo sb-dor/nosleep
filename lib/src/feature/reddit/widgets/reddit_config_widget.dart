@@ -36,6 +36,8 @@ class RedditConfigWidget extends StatefulWidget {
 class RedditConfigWidgetState extends State<RedditConfigWidget> {
   late final RedditController redditController;
   late final RedditDataController redditDataController;
+  final scrollController = ScrollController();
+  final searchController = TextEditingController();
 
   @override
   void initState() {
@@ -54,6 +56,8 @@ class RedditConfigWidgetState extends State<RedditConfigWidget> {
   void dispose() {
     redditController.dispose();
     redditDataController.dispose();
+    scrollController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 

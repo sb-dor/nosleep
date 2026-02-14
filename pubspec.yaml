@@ -1,6 +1,6 @@
 name: no_sleep
 
-description: "test"
+description: "Dark, immersive horror stories and themed articles for night reading."
 
 publish_to: 'none'
 
@@ -8,7 +8,11 @@ version: 0.0.2+2
 
 #homepage: https://github.com/
 
-#repository: https://github.com/
+repository: https://github.com/sb-dor/nosleep
+
+web_app: https://nosleep-9f36d.web.app/
+
+google_play: https://play.google.com/store/apps/details?id=com.sbdor.nosleep&pcampaignid=web_share
 
 #issue_tracker: https://github.com/
 

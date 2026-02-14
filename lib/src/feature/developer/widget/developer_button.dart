@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/common/localization/localization.dart';
-import 'package:no_sleep/src/common/router/routes.dart';
-import 'package:octopus/octopus.dart';
+import 'package:no_sleep/src/feature/developer/widget/developer_screen.dart';
 
 /// {@template developer_button}
 /// DeveloperButton widget
@@ -11,9 +10,14 @@ class DeveloperButton extends StatelessWidget {
   const DeveloperButton({super.key});
 
   @override
-  Widget build(BuildContext context) => IconButton(
-    icon: const Icon(Icons.developer_mode),
+  Widget build(BuildContext context) => FloatingActionButton(
+    backgroundColor: Colors.black,
     tooltip: Localization.of(context).developer,
-    onPressed: () => Octopus.of(context).push(Routes.developer),
+    onPressed: () => showDialog(
+      useSafeArea: false,
+      context: context,
+      builder: (context) => const DeveloperScreen(),
+    ),
+    child: const Icon(Icons.developer_mode, color: Colors.red),
   );
 }

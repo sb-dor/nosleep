@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
@@ -42,11 +43,6 @@ class DeveloperScreen extends StatelessWidget {
         // // --- Application information --- //
         // _GroupSeparator(title: Localization.of(context).application),
         const _OpenUriTile(
-          title: 'Team leader',
-          description: 'dilovar88',
-          uri: 'https://github.com/dilovar88',
-        ),
-        const _OpenUriTile(
           title: 'Developer/Maintainer',
           description: 'sb-dor',
           uri: 'https://github.com/sb-dor',
@@ -55,16 +51,17 @@ class DeveloperScreen extends StatelessWidget {
         const _ShowLicensePageTile(),
         const _ShowApplicationDependenciesTile(),
         const _ShowApplicationDevDependenciesTile(),
-        const _ShowLogsScreenTile(),
+
+        if (kDebugMode) const _ShowLogsScreenTile(),
 
         // // --- Navigation --- //
         // _GroupSeparator(title: Localization.of(context).navigation),
         // const _ResetNavigationTile(),
 
         // --- Database --- //
-        _GroupSeparator(title: Localization.of(context).database),
+        if (kDebugMode) _GroupSeparator(title: Localization.of(context).database),
         /* const _ViewDatabaseTile(), */
-        const _ClearDatabaseTile(),
+        if (kDebugMode) const _ClearDatabaseTile(),
 
         // --- Useful links --- //
         _GroupSeparator(title: Localization.of(context).usefulLinks),
@@ -83,20 +80,22 @@ class DeveloperScreen extends StatelessWidget {
         const _OpenUriTile(
           title: 'Repository',
           description: 'Project repository',
-          uri: 'https://github.com/dilovar88/avera-web-flutter',
+          uri: 'https://github.com/sb-dor/nosleep',
         ),
         const _OpenUriTile(
           title: 'Pull requests',
           description: 'Pull requests list',
-          uri: 'https://github.com/dilovar88/avera-web-flutter/pulls',
+          uri: 'https://github.com/sb-dor/nosleep/pulls',
         ),
+
         // const _OpenUriTile(title: 'Jenkins', description: 'CI/CD pipeline'),
         // const _OpenUriTile(title: 'Figma', description: 'Designs system'),
-        const _OpenUriTile(
-          title: 'Firebase',
-          description: 'Firebase console',
-          uri: 'https://console.firebase.google.com/project/avera-web/overview',
-        ),
+        if (kDebugMode)
+          const _OpenUriTile(
+            title: 'Firebase',
+            description: 'Firebase console',
+            uri: 'https://console.firebase.google.com/project/avera-web/overview',
+          ),
         const _OpenUriTile(title: 'Sentry', description: 'Sentry console'),
 
         /* SliverPadding(
@@ -214,6 +213,12 @@ class _ShowApplicationInfoTile extends StatelessWidget {
                 title: 'Web-App',
                 subtitle: Pubspec.source['web_app'] as String?,
                 content: Pubspec.source['web_app'] as String?,
+              ),
+
+              _CopyTile(
+                title: 'Google Play',
+                subtitle: Pubspec.source['google_play'] as String?,
+                content: Pubspec.source['google_play'] as String?,
               ),
             ],
           ),

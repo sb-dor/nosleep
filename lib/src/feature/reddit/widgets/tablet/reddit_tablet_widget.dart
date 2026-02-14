@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/common/widget/empty_widget.dart';
 import 'package:no_sleep/src/common/widget/error_widget.dart' as error_widget;
+import 'package:no_sleep/src/feature/developer/widget/developer_button.dart';
 import 'package:no_sleep/src/feature/github_reports/widgets/github_reports_config_widget.dart';
 import 'package:no_sleep/src/feature/notifications/widgets/notifications_config_widget.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
@@ -35,6 +36,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
         listenable: redditDataController,
         builder: (context, child) {
           return Scaffold(
+            floatingActionButton: const DeveloperButton(),
             appBar: AppBar(
               forceMaterialTransparency: true,
               title: Row(

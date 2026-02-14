@@ -79,7 +79,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
                 builder: (context, child) {
                   return RefreshIndicator.adaptive(
                     onRefresh: () async {
-                      load(reload: true);
+                      load(refresh: true);
                     },
                     child: CustomScrollView(
                       controller: scrollController,
@@ -182,8 +182,9 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
                             child: Center(child: CircularProgressIndicator.adaptive()),
                           ),
                           Reddit$ErrorState() => SliverFillRemaining(
+                            hasScrollBody: false,
                             child: Center(
-                              child: error_widget.ErrorWidget(onRetry: () => load(reload: true)),
+                              child: error_widget.ErrorWidget(onRetry: () => load(refresh: true)),
                             ),
                           ),
                           Reddit$LoadedState() =>
@@ -230,6 +231,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
         redditController.load(
           redditDataController.subreddit,
           postType: redditDataController.postType,
+          refresh: true,
         );
       },
       style: ElevatedButton.styleFrom(

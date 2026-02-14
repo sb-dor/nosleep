@@ -32,11 +32,11 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
 
-  void load({final bool reload = false}) {
+  void load({final bool refresh = false}) {
     redditController.load(
       redditDataController.subreddit,
       postType: redditDataController.postType,
-      reload: reload,
+      refresh: refresh,
     );
     _lastSearch = _currentSearchControllerValue;
   }
@@ -58,12 +58,12 @@ mixin RedditStateMixin<T extends StatefulWidget> on State<T> {
       if (textLessThenLength) {
         /// load default [nosleep] search
         redditDataController.setSubreddit(noSleep);
-        load(reload: true);
+        load(refresh: true);
         return;
       }
       if (textLessThenLength) return;
       redditDataController.setSubreddit(searchController.text.trim());
-      load(reload: true);
+      load(refresh: true);
     });
   }
 }

@@ -78,7 +78,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                 builder: (context, child) {
                   return RefreshIndicator.adaptive(
                     onRefresh: () async {
-                      load(reload: true);
+                      load(refresh: true);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 48),
@@ -202,7 +202,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
                             ),
                             Reddit$ErrorState() => SliverFillRemaining(
                               child: Center(
-                                child: error_widget.ErrorWidget(onRetry: () => load(reload: true)),
+                                child: error_widget.ErrorWidget(onRetry: () => load(refresh: true)),
                               ),
                             ),
                             Reddit$LoadedState() =>
@@ -254,6 +254,7 @@ class _RedditTabletWidgetState extends State<RedditTabletWidget> with RedditStat
       redditController.load(
         redditDataController.subreddit,
         postType: redditDataController.postType,
+        refresh: true,
       );
     },
     style: ElevatedButton.styleFrom(

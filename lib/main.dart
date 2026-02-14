@@ -7,7 +7,6 @@ import 'package:no_sleep/src/common/widget/app_error.dart' deferred as app_error
 import 'package:no_sleep/src/feature/initialization/data/initialization.dart'
     deferred as initialization;
 import 'package:no_sleep/src/feature/initialization/widget/app.dart';
-import 'package:no_sleep/src/feature/settings/widget/settings_scope.dart';
 import 'package:octopus/octopus.dart';
 import 'package:platform_info/platform_info.dart';
 
@@ -33,11 +32,9 @@ void main() => appZone(() async {
             initializationProgress.value = (progress: progress, message: message),
         onSuccess: (dependencies) async => runApp(
           dependencies.inject(
-            child: SettingsScope(
-              child: NoAnimationScope(
-                noAnimation: platform.js || platform.desktop,
-                child: const App(),
-              ),
+            child: NoAnimationScope(
+              noAnimation: platform.js || platform.desktop,
+              child: const App(),
             ),
           ),
         ),

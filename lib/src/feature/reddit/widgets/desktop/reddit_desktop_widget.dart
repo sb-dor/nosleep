@@ -184,7 +184,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                                 ),
                               ),
                               IconButton(
-                                onPressed: () => load(reload: true),
+                                onPressed: () => load(refresh: true),
                                 icon: const Icon(Icons.refresh),
                               ),
                             ],
@@ -199,7 +199,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                         ),
                         Reddit$ErrorState() => SliverFillRemaining(
                           child: Center(
-                            child: error_widget.ErrorWidget(onRetry: () => load(reload: true)),
+                            child: error_widget.ErrorWidget(onRetry: () => load(refresh: true)),
                           ),
                         ),
                         Reddit$LoadedState() =>
@@ -262,6 +262,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
         redditController.load(
           redditDataController.subreddit,
           postType: redditDataController.postType,
+          refresh: true,
         );
       },
       style: ElevatedButton.styleFrom(

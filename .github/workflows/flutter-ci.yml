@@ -173,4 +173,3 @@ jobs:
           track: production
           status: draft
           whatsNewDirectory: distribution/whatsnew
-          changesNotSentForReview: true

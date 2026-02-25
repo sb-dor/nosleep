@@ -1,4 +1,4 @@
-import 'package:control/Control.dart';
+import 'package:control/control.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:no_sleep/src/feature/github_reports/controller/github_reports_controller.dart';

@@ -1,4 +1,4 @@
-import 'package:control/Control.dart';
+import 'package:control/control.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:no_sleep/src/common/util/local_pagination_util.dart';
 import 'package:no_sleep/src/feature/reddit/data/reddit_repository.dart';

@@ -1,0 +1,176 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      # 1. Get the source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Flutter SDK
+      - name: Setup Flutter and dependencies
+        uses: ./.github/actions/setup
+        with:
+          flutter-version: "3.38.10"
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        timeout-minutes: 1
+        run: flutter pub get
+
+      # 4. Generate code (l10n, assets, build_runner) — must be before format/analyze
+      - name: Generate l10n (intl_utils)
+        run: |
+          dart pub global activate intl_utils
+          dart pub global run intl_utils:generate
+          flutter gen-l10n \
+            --arb-dir lib/src/common/localization \
+            --output-dir lib/src/common/localization/generated \
+            --template-arb-file intl_en.arb
+
+      - name: Generate assets (flutter_gen)
+        run: |
+          dart pub global activate flutter_gen
+          fluttergen -c pubspec.yaml
+
+      - name: Run build_runner
+        run: dart run build_runner build --delete-conflicting-outputs --release
+
+      # 5. Format check — after generation so generated files don't cause false failures
+      - name: Check code format
+        id: check-format
+        timeout-minutes: 1
+        run: |
+          if ! find lib test -name "*.dart" ! -name "*.*.dart" -print0 | xargs -0 dart format --set-exit-if-changed --line-length 100 -o none; then
+            echo "⚠️ Code needs formatting. Run 'dart format' locally."
+          fi
+
+      # 6. Analyze
+      - name: Check for Warnings
+        id: check-analyzer
+        timeout-minutes: 1
+        run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
+      # 7. Tests
+      - name: Run tests (excluding drift migrations)
+        run: |
+          flutter test --exclude-tags drift_migration \
+            $(find test -name "*_test.dart" \
+              ! -path "test/drift/*" \
+              | tr '\n' ' ')
+
+      # 8. Parse changelog — before build so version info is ready
+      - name: Extract latest changelog entry
+        id: changelog
+        run: |
+          VERSION=$(grep -m 1 '## \[' CHANGELOG.md | sed 's/## \[\(.*\)\].*/\1/')
+          NOTES=$(awk '/^## \[/{found++} found==1{print} found==2{exit}' CHANGELOG.md | tail -n +2)
+
+          # Take complete lines that fit within 500 characters
+          TRUNCATED=""
+          while IFS= read -r line; do
+            TEST="$TRUNCATED$line
+          "
+            if [ ${#TEST} -gt 500 ]; then
+              break
+            fi
+            TRUNCATED="$TEST"
+          done <<< "$NOTES"
+
+          # Remove trailing ### headers without content
+          NOTES=$(echo "$TRUNCATED" | sed '/^### [A-Za-z]*[[:space:]]*$/d')
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          echo "$NOTES" > release_notes.txt
+          echo "release_notes_file=release_notes.txt" >> $GITHUB_OUTPUT
+
+          echo "✅ Extracted version: $VERSION"
+          echo "📝 Release notes:"
+          echo "$NOTES"
+
+      # 9. Decode all secrets — before build (Firebase app distribution is not necessary for now)
+      #      - name: Setup Firebase CLI
+      #        run: |
+      #          curl -sL https://firebase.tools | bash
+      #          firebase --version
+      #
+      #      - name: Authenticate with Firebase
+      #        run: |
+      #          echo '${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}' | base64 --decode > $HOME/firebase_key.json
+      #          export FIREBASE_CREDENTIALS=$HOME/firebase_key.json
+
+      - name: Decode Google Play Service Account
+        run: 'echo "$GOOGLE_CLOUD_CREDENTIALS" | base64 --decode > android/google_cloud_credentials.json'
+        env:
+          GOOGLE_CLOUD_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS_JSON_BASE64 }}
+
+      - name: Create firebase_options
+        run: 'echo "$FIREBASE_OPTIONS" | base64 --decode > lib/firebase_options.dart'
+        env:
+          FIREBASE_OPTIONS: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
+
+      - name: Create google_service_json for Android
+        run: 'echo "$GOOGLE_SERVICES_JSON" | base64 --decode > android/app/google-services.json'
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+
+      - name: Create key.properties for Android
+        run: 'echo "$KEY_PROPERTIES" | base64 --decode > android/key.properties'
+        env:
+          KEY_PROPERTIES: ${{ secrets.KEY_PROPERTIES_BASE64 }}
+
+      - name: Create upload-keystore for Android
+        run: 'echo "$UPLOAD_KEYSTORE" | base64 --decode > android/app/upload-keystore.jks'
+        env:
+          UPLOAD_KEYSTORE: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+
+      - name: Create production config
+        run: 'echo "$PRODUCTION_CONFIG" | base64 --decode > config/production.json'
+        env:
+          PRODUCTION_CONFIG: ${{ secrets.PRODUCTION_CONFIG_JSON_BASE64 }}
+
+      # 10. Build
+      # ---------------- ANDROID APP BUNDLE + APK ---------------- #
+      - name: Build App Bundle (for Google Play)
+        run: flutter build appbundle --release --dart-define-from-file=config/production.json
+
+      #      - name: Build APK (for Firebase)
+      #        run: flutter build apk --release --dart-define-from-file=config/production.json
+
+      # 11. Deploy
+      # ---------------- FIREBASE DISTRIBUTION ---------------- #
+      #      - name: Deploy APK to Firebase App Distribution
+      #        uses: wzieba/Firebase-Distribution-Github-Action@v1
+      #        with:
+      #          appId: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+      #          serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}
+      #          groups: group-testers
+      #          file: build/app/outputs/flutter-apk/app-release.apk
+      #          releaseNotes: ${{ steps.changelog.outputs.version }}
+
+      # ---------------- GOOGLE PLAY RELEASE ---------------- #
+      - name: Prepare Google Play release notes
+        run: |
+          mkdir -p distribution/whatsnew
+          cp release_notes.txt distribution/whatsnew/whatsnew-en-US
+
+      - name: Deploy App Bundle to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: android/google_cloud_credentials.json
+          packageName: com.sbdor.nosleep
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: production
+          status: draft
+          whatsNewDirectory: distribution/whatsnew
+          changesNotSentForReview: true

@@ -1,0 +1,71 @@
+# Some code was taken from - https://github.com/PlugFox/template/tree/master/.github
+
+name: Flutter Checks
+
+on:
+  push:
+    branches:
+      - 'development'
+
+  pull_request:
+    branches:
+      - 'development'
+
+jobs:
+  flutter-checks:
+    name: Run Flutter Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Get the .github actions
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: ./.github/actions/setup
+        with:
+          flutter-version: "3.38.10"
+
+      - name: Install dependencies
+        timeout-minutes: 1
+        run: flutter pub get
+
+      - name: 🚦 Check code format
+        id: check-format
+        timeout-minutes: 1
+        run: |
+          if ! find lib test -name "*.dart" ! -name "*.*.dart" -print0 | xargs -0 dart format --set-exit-if-changed --line-length 100 -o none; then
+            echo "⚠️ Code needs formatting. Run 'dart format' locally."
+          fi
+
+      - name: Check for Warnings
+        id: check-analyzer
+        timeout-minutes: 1
+        run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
+      # ---------------- GENERATE ---------------- #
+      - name: Generate l10n (intl_utils)
+        run: |
+          dart pub global activate intl_utils
+          dart pub global run intl_utils:generate
+          flutter gen-l10n \
+            --arb-dir lib/src/common/localization \
+            --output-dir lib/src/common/localization/generated \
+            --template-arb-file intl_en.arb
+
+      - name: Generate assets (flutter_gen)
+        run: |
+          dart pub global activate flutter_gen
+          fluttergen -c pubspec.yaml
+
+      - name: Run build_runner
+        run: dart run build_runner build --delete-conflicting-outputs --release
+
+      # ---------------- TESTS ---------------- #
+      - name: Run tests (excluding drift migrations)
+        run: |
+          flutter test --exclude-tags drift_migration \
+            $(find test -name "*_test.dart" \
+              ! -path "test/drift/*" \
+              | tr '\n' ' ')

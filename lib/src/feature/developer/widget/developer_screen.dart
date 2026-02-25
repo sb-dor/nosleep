@@ -96,7 +96,8 @@ class DeveloperScreen extends StatelessWidget {
             description: 'Firebase console',
             uri: 'https://console.firebase.google.com/project/avera-web/overview',
           ),
-        const _OpenUriTile(title: 'Sentry', description: 'Sentry console'),
+
+        if (kDebugMode) const _OpenUriTile(title: 'Sentry', description: 'Sentry console'),
 
         /* SliverPadding(
               padding: ScaffoldPadding.of(context).copyWith(top: 16, bottom: 16),

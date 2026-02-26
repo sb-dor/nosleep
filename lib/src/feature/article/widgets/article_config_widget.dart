@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/common/util/screen_util.dart';
 import 'package:no_sleep/src/feature/article/controller/article_controller.dart';
@@ -44,7 +43,8 @@ class ArticleConfigWidgetState extends State<ArticleConfigWidget> {
   void initState() {
     super.initState();
     articleController = ArticleController(
-      articleRepository: kIsWeb || kIsWasm ? ArticleJSRepositoryImpl() : ArticleRepositoryImpl(),
+      // articleRepository: kIsWeb || kIsWasm ? ArticleJSRepositoryImpl() : ArticleRepositoryImpl(),
+      articleRepository: ArticleJSRepositoryImpl(),
     );
     articleController.article(widget.postId);
   }

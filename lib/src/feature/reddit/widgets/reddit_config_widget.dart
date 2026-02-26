@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/common/util/local_pagination_util.dart';
 import 'package:no_sleep/src/common/util/screen_util.dart';
@@ -44,9 +43,10 @@ class RedditConfigWidgetState extends State<RedditConfigWidget> {
     super.initState();
     final dependencies = DependenciesScope.of(context);
     redditController = RedditController(
-      redditRepository: kIsWeb || kIsWasm
-          ? RedditJSRepositoryImpl(apiClient: dependencies.apiClient)
-          : RedditRepositoryImpl(apiClient: dependencies.apiClient),
+      // redditRepository: kIsWeb || kIsWasm
+      //     ? RedditJSRepositoryImpl(apiClient: dependencies.apiClient)
+      //     : RedditRepositoryImpl(apiClient: dependencies.apiClient),
+      redditRepository: RedditJSRepositoryImpl(apiClient: dependencies.apiClient),
       localPaginationUtil: LocalPaginationUtil(),
     );
     redditDataController = RedditDataController();

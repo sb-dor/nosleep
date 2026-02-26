@@ -137,7 +137,7 @@ jobs:
       - name: Create production config
         run: 'echo "$PRODUCTION_CONFIG" | base64 --decode > config/production.json'
         env:
-          PRODUCTION_CONFIG: ${{ secrets.PRODUCTION_CONFIG_JSON_BASE64 }}
+          PRODUCTION_CONFIG: ${{ secrets.WEB_PRODUCTION_CONFIG_JSON_BASE64 }}
 
       # 10. Build
       # ---------------- ANDROID APP BUNDLE + APK ---------------- #

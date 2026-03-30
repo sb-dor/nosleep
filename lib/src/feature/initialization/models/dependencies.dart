@@ -1,9 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:no_sleep/src/common/database/database.dart';
 import 'package:no_sleep/src/common/model/app_metadata.dart';
 import 'package:no_sleep/src/common/util/api_client.dart';
 import 'package:no_sleep/src/feature/initialization/widget/dependencies_scope.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// {@template dependencies}
 /// Application dependencies.
@@ -23,12 +21,6 @@ class Dependencies {
 
   /// App metadata
   late final AppMetadata metadata;
-
-  /// Shared preferences
-  late final SharedPreferences sharedPreferences;
-
-  /// Database
-  late final AppDatabase database;
 
   /// API Client
   late final ApiClient apiClient;

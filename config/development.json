@@ -2,7 +2,10 @@
   "ENVIRONMENT": "development",
   "API_BASE_URL": "",
   "DATABASE_NAME": "app_database",
+  "GITHUB_TOKEN": "",
+  "GITHUB_OWNER": "",
+  "GITHUB_REPO": "",
   "MAX_LAYOUT_WIDTH": 768,
-  "ALPHA": false,
+  "ALPHA": true,
   "BETA": false
 }

@@ -1,3 +1,9 @@
+## [0.0.5] - 2026-04-19
+
+### Added
+
+- Added new type of search engine
+
 ## [0.0.2] - 2026-02-08
 
 ### Added

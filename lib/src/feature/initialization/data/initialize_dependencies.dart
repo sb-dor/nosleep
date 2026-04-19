@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:control/control.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:l/l.dart';
+import 'package:no_sleep/firebase_options.dart';
 import 'package:no_sleep/src/common/constant/config.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/controller/controller_observer.dart';
@@ -38,6 +40,8 @@ Future<Dependencies> $initializeDependencies({
 typedef _InitializationStep = FutureOr<void> Function(Dependencies dependencies);
 
 final Map<String, _InitializationStep> _initializationSteps = <String, _InitializationStep>{
+  'Initializing Firebase': (_) =>
+      Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
   'Platform pre-initialization': (_) => $platformInitialization(),
   'Creating app metadata': (dependencies) => dependencies.metadata = AppMetadata(
     isWeb: platform.js,

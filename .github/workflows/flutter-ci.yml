@@ -98,16 +98,16 @@ jobs:
           echo "📝 Release notes:"
           echo "$NOTES"
 
-      # 9. Decode all secrets — before build (Firebase app distribution is not necessary for now)
-      #      - name: Setup Firebase CLI
-      #        run: |
-      #          curl -sL https://firebase.tools | bash
-      #          firebase --version
-      #
-      #      - name: Authenticate with Firebase
-      #        run: |
-      #          echo '${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}' | base64 --decode > $HOME/firebase_key.json
-      #          export FIREBASE_CREDENTIALS=$HOME/firebase_key.json
+      # 9. Decode all secrets — before build
+      - name: Setup Firebase CLI
+        run: |
+          curl -sL https://firebase.tools | bash
+          firebase --version
+
+      - name: Authenticate with Firebase
+        run: |
+          echo '${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}' | base64 --decode > $HOME/firebase_key.json
+          export FIREBASE_CREDENTIALS=$HOME/firebase_key.json
 
       - name: Decode Google Play Service Account
         run: 'echo "$GOOGLE_CLOUD_CREDENTIALS" | base64 --decode > android/google_cloud_credentials.json'
@@ -142,7 +142,18 @@ jobs:
       # 10. Build
       # ---------------- ANDROID APP BUNDLE + APK ---------------- #
       - name: Build App Bundle (for Google Play)
-        run: flutter build appbundle --release --dart-define-from-file=config/production.json
+        run: |
+          flutter build appbundle --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define-from-file=config/production.json
+
+      # 10.1 Upload obfuscation symbols to Firebase Crashlytics
+      - name: Upload debug symbols to Crashlytics
+        run: |
+          firebase crashlytics:symbols:upload \
+            --app=${{ secrets.ANDROID_FIREBASE_APP_ID }} \
+            build/debug-info
 
       #      - name: Build APK (for Firebase)
       #        run: flutter build apk --release --dart-define-from-file=config/production.json
@@ -173,3 +184,4 @@ jobs:
           track: production
           status: draft
           whatsNewDirectory: distribution/whatsnew
+          # changesNotSentForReview: true

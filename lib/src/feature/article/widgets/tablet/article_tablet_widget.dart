@@ -19,7 +19,6 @@ class ArticleTabletWidget extends StatefulWidget {
 class _ArticleTabletWidgetState extends State<ArticleTabletWidget> {
   late final _config = ArticleConfigInhWidget.of(context);
   late final _controller = _config.articleController;
-  late final _postId = _config.postId;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class _ArticleTabletWidgetState extends State<ArticleTabletWidget> {
       body: SafeArea(
         child: ListenableBuilder(
           listenable: _controller,
-          builder: (_, __) {
+          builder: (_, _) {
             final state = _controller.state;
 
             return switch (state) {

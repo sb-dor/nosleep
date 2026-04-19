@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r import.*text_input_formatters /Users/avaz/StudioProjects/nosleep/lib --include=*.dart)",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/model/virtual_key_codes\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/token_util\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/timeouts\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/color_util\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/json_util\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/stream_util\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/text_controller_listener\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/util/placeholders\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/widget/sizer\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/widget/scroll_with_mouse_behavior\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/widget/not_found_screen\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/router/authentication_guard\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")",
+      "Bash(grep -r \"from ''package:no_sleep/src/common/router/home_guard\" /Users/avaz/StudioProjects/nosleep/lib --include=\"*.dart\")"
+    ]
+  }
+}

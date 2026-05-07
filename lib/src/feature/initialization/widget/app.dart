@@ -6,6 +6,7 @@ import 'package:no_sleep/src/common/localization/localization.dart';
 import 'package:no_sleep/src/common/router/router_state_mixin.dart';
 import 'package:no_sleep/src/common/util/performance_overlay_tool.dart';
 import 'package:no_sleep/src/common/widget/window_scope.dart';
+import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_host_widget.dart';
 import 'package:octopus/octopus.dart';
 
 /// {@template app}
@@ -67,11 +68,13 @@ class _AppState extends State<App> with RouterStateMixin {
           enable: !kReleaseMode,
           octopus: router,
           child: PerformanceOverlayTool(
-            enabled: false,
-            child: Banner(
-              location: BannerLocation.topEnd,
-              message: _buildBannerMessage(),
-              child: child!,
+            enabled: kProfileMode,
+            child: InAppUpdateHostWidget(
+              builder: (context) => Banner(
+                location: BannerLocation.topEnd,
+                message: _buildBannerMessage(),
+                child: child!,
+              ),
             ),
           ),
         ),

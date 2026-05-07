@@ -1,3 +1,9 @@
+## [0.0.7] - 2026-05-07
+
+### Added
+
+- Added In-App Update feature for Android
+
 ## [0.0.5] - 2026-04-19
 
 ### Added

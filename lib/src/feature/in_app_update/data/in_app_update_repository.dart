@@ -3,6 +3,8 @@ import 'package:in_app_update/in_app_update.dart';
 abstract interface class IInAppUpdateRepository {
   Future<AppUpdateInfo?> checkForUpdate();
 
+  Stream<InstallStatus> get installStatusStream;
+
   Future<void> startFlexibleUpdate();
 
   Future<void> completeFlexibleUpdate();
@@ -15,6 +17,9 @@ final class InAppUpdateRepositoryImpl implements IInAppUpdateRepository {
   Future<AppUpdateInfo?> checkForUpdate() async {
     return InAppUpdate.checkForUpdate();
   }
+
+  @override
+  Stream<InstallStatus> get installStatusStream => InAppUpdate.installUpdateListener;
 
   @override
   Future<void> startFlexibleUpdate() async {

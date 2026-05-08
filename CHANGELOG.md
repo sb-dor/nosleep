@@ -1,3 +1,9 @@
+## [0.0.8] - 2026-05-08
+
+### Fixed
+
+- Fixed minor improvements across the application
+
 ## [0.0.7] - 2026-05-07
 
 ### Added

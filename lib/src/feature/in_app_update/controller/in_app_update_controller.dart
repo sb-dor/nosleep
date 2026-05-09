@@ -50,7 +50,12 @@ final class InAppUpdateController extends StateController<InAppUpdateState>
 
   Future<void> checkForUpdate() => handle(
     () async {
-      if (state is! InAppUpdate$InitialState) return;
+      if (state is InAppUpdate$CheckingState ||
+          state is InAppUpdate$AvailableState ||
+          state is InAppUpdate$UpdatingState ||
+          state is InAppUpdate$CompletedState) {
+        return;
+      }
 
       setState(const InAppUpdateState.checking());
 
@@ -148,7 +153,6 @@ final class InAppUpdateController extends StateController<InAppUpdateState>
   static void _setDebugInfo(String message) {
     final value = '${DateTime.now().toIso8601String()} | $message';
     lastCheckDebugInfo.value = value;
-    print('message from in app update: $value');
   }
 
   static String _formatUpdateInfo(AppUpdateInfo? updateInfo) {

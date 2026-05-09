@@ -22,7 +22,7 @@ class InAppUpdateHostWidget extends StatefulWidget {
   State<InAppUpdateHostWidget> createState() => _InAppUpdateHostWidgetState();
 }
 
-class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
+class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with WidgetsBindingObserver {
   InAppUpdateController? _controller;
   var _sheetShown = false;
 
@@ -30,6 +30,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
   void initState() {
     super.initState();
     if (kInAppUpdatePlatform && widget.checkForUpdate) {
+      WidgetsBinding.instance.addObserver(this);
       _controller = InAppUpdateController(inAppUpdateRepository: const InAppUpdateRepositoryImpl());
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _controller?.checkForUpdate();
@@ -39,8 +40,16 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || _sheetShown) return;
+
+    _controller?.checkForUpdate();
   }
 
   @override

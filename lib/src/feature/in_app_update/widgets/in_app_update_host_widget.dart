@@ -1,4 +1,5 @@
 import 'package:control/control.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/util/platform/availability/platform_availability.dart';
@@ -8,7 +9,11 @@ import 'package:no_sleep/src/feature/in_app_update/data/in_app_update_repository
 import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_bottom_sheet.dart';
 
 class InAppUpdateHostWidget extends StatefulWidget {
-  const InAppUpdateHostWidget({super.key, required this.builder, this.checkForUpdate = true});
+  const InAppUpdateHostWidget({
+    super.key,
+    required this.builder,
+    this.checkForUpdate = kReleaseMode,
+  });
 
   final WidgetBuilder builder;
   final bool checkForUpdate;
@@ -17,7 +22,7 @@ class InAppUpdateHostWidget extends StatefulWidget {
   State<InAppUpdateHostWidget> createState() => _InAppUpdateHostWidgetState();
 }
 
-class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
+class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with WidgetsBindingObserver {
   InAppUpdateController? _controller;
   var _sheetShown = false;
 
@@ -25,6 +30,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
   void initState() {
     super.initState();
     if (kInAppUpdatePlatform && widget.checkForUpdate) {
+      WidgetsBinding.instance.addObserver(this);
       _controller = InAppUpdateController(inAppUpdateRepository: const InAppUpdateRepositoryImpl());
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _controller?.checkForUpdate();
@@ -34,8 +40,16 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || _sheetShown) return;
+
+    _controller?.checkForUpdate();
   }
 
   @override

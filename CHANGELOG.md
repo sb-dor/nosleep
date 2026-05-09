@@ -1,3 +1,9 @@
+## [0.0.11] - 2026-05-09
+
+### Added
+
+- Added logger for monitoring and debugging In-App Update information
+
 ## [0.0.8] - 2026-05-08
 
 ### Fixed

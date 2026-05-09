@@ -1,5 +1,4 @@
 import 'package:control/control.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/util/platform/availability/platform_availability.dart';
@@ -9,11 +8,7 @@ import 'package:no_sleep/src/feature/in_app_update/data/in_app_update_repository
 import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_bottom_sheet.dart';
 
 class InAppUpdateHostWidget extends StatefulWidget {
-  const InAppUpdateHostWidget({
-    super.key,
-    required this.builder,
-    this.checkForUpdate = kReleaseMode,
-  });
+  const InAppUpdateHostWidget({super.key, required this.builder, this.checkForUpdate = true});
 
   final WidgetBuilder builder;
   final bool checkForUpdate;

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/localization/localization.dart';
 import 'package:no_sleep/src/common/widget/scaffold_padding.dart';
-import 'package:no_sleep/src/feature/in_app_update/controller/in_app_update_controller.dart';
 import 'package:url_launcher/url_launcher_string.dart' as url_launcher;
 
 /// {@template developer_screen}
@@ -45,7 +44,6 @@ class DeveloperScreen extends StatelessWidget {
           uri: 'https://github.com/sb-dor',
         ),
         const _ShowApplicationInfoTile(),
-        const _ShowInAppUpdateDiagnosticsTile(),
         const _ShowLicensePageTile(),
         const _ShowApplicationDependenciesTile(),
         const _ShowApplicationDevDependenciesTile(),
@@ -102,44 +100,6 @@ class DeveloperScreen extends StatelessWidget {
             ), */
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
-    ),
-  );
-}
-
-class _ShowInAppUpdateDiagnosticsTile extends StatelessWidget {
-  const _ShowInAppUpdateDiagnosticsTile();
-
-  @override
-  Widget build(BuildContext context) => SliverPadding(
-    padding: ScaffoldPadding.of(context),
-    sliver: SliverToBoxAdapter(
-      child: ValueListenableBuilder<String?>(
-        valueListenable: InAppUpdateController.lastCheckDebugInfo,
-        builder: (context, value, child) {
-          final content = value ?? 'No in-app update check has run yet.';
-
-          return ListTile(
-            title: const Text('In-app update diagnostics'),
-            subtitle: Text(content, maxLines: 3, overflow: TextOverflow.ellipsis),
-            trailing: const IconButton(
-              tooltip: 'Check now',
-              icon: Icon(Icons.refresh),
-              onPressed: InAppUpdateController.debugCheckForUpdate,
-            ),
-            onTap: () {
-              Clipboard.setData(ClipboardData(text: content));
-              ScaffoldMessenger.of(context)
-                ..clearSnackBars()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text(Localization.of(context).copied),
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-            },
-          );
-        },
-      ),
     ),
   );
 }

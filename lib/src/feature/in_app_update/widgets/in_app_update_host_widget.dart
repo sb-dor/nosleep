@@ -1,11 +1,10 @@
-import 'package:control/control.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
+import 'package:l/l.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/util/platform/availability/platform_availability.dart';
 import 'package:no_sleep/src/common/util/url_launcher_helper.dart';
-import 'package:no_sleep/src/feature/in_app_update/controller/in_app_update_controller.dart';
-import 'package:no_sleep/src/feature/in_app_update/data/in_app_update_repository.dart';
 import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_bottom_sheet.dart';
 
 class InAppUpdateHostWidget extends StatefulWidget {
@@ -23,7 +22,9 @@ class InAppUpdateHostWidget extends StatefulWidget {
 }
 
 class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with WidgetsBindingObserver {
-  InAppUpdateController? _controller;
+  var _isChecking = false;
+  var _isUpdating = false;
+  var _updateAvailable = false;
   var _sheetShown = false;
   var _sheetScheduled = false;
 
@@ -32,17 +33,17 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
     super.initState();
     if (kInAppUpdatePlatform && widget.checkForUpdate) {
       WidgetsBinding.instance.addObserver(this);
-      _controller = InAppUpdateController(inAppUpdateRepository: const InAppUpdateRepositoryImpl());
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _controller?.checkForUpdate();
+        if (mounted) _checkForUpdate();
       });
     }
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _controller?.dispose();
+    if (kInAppUpdatePlatform && widget.checkForUpdate) {
+      WidgetsBinding.instance.removeObserver(this);
+    }
     super.dispose();
   }
 
@@ -50,41 +51,59 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed || _sheetShown) return;
 
-    _controller?.checkForUpdate();
+    _checkForUpdate();
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (kInAppUpdatePlatform && widget.checkForUpdate) {
-      return StateConsumer<InAppUpdateController, InAppUpdateState>(
-        controller: _controller,
-        listener: _onStateChanged,
-        child: widget.builder(context),
-        builder: (context, state, child) => child ?? const SizedBox.shrink(),
-      );
-    } else {
-      return widget.builder(context);
+  Widget build(BuildContext context) => widget.builder(context);
+
+  Future<void> _checkForUpdate() async {
+    if (!mounted || _isChecking || _isUpdating || _updateAvailable) return;
+
+    _isChecking = true;
+    try {
+      final updateInfo = await InAppUpdate.checkForUpdate();
+      l.d('In-app update check result: ${_formatUpdateInfo(updateInfo)}');
+      if (!mounted) return;
+
+      if (updateInfo.updateAvailability == UpdateAvailability.developerTriggeredUpdateInProgress) {
+        await _startUpdate();
+        return;
+      }
+
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable &&
+          updateInfo.immediateUpdateAllowed) {
+        _updateAvailable = true;
+        _scheduleUpdateSheet();
+      }
+    } on Object catch (error) {
+      l.d('In-app update check error: $error');
+      _showSnackBar(error.toString());
+    } finally {
+      _isChecking = false;
     }
   }
 
-  void _onStateChanged(
-    BuildContext context,
-    InAppUpdateController controller,
-    InAppUpdateState previous,
-    InAppUpdateState current,
-  ) {
-    if (current is InAppUpdate$AvailableState && !_sheetShown) {
-      _scheduleUpdateSheet();
-    }
+  Future<void> _startUpdate() async {
+    if (_isUpdating) return;
 
-    if (current is InAppUpdate$CompletedState) {
-      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-        const SnackBar(content: Text('Update downloaded. Restarting app update flow.')),
-      );
-    }
-
-    if (current is InAppUpdate$ErrorState) {
-      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(current.message)));
+    _isUpdating = true;
+    try {
+      // Current flow immediate update. Google Play owns the visible update UI
+      // after the user accepts our custom bottom sheet.
+      final result = await InAppUpdate.performImmediateUpdate();
+      l.d('In-app immediate update result: $result');
+      if (result == AppUpdateResult.userDeniedUpdate) {
+        _showSnackBar('Update canceled.');
+      } else if (result == AppUpdateResult.inAppUpdateFailed) {
+        _showSnackBar('Update failed.');
+      }
+    } on Object catch (error) {
+      l.d('In-app update start error: $error');
+      _showSnackBar(error.toString());
+    } finally {
+      _isUpdating = false;
+      _updateAvailable = false;
     }
   }
 
@@ -96,10 +115,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
       _sheetScheduled = false;
       if (!mounted || _sheetShown) return;
 
-      if (Navigator.maybeOf(context) == null) {
-        _controller?.checkForUpdate();
-        return;
-      }
+      if (Navigator.maybeOf(context) == null) return;
 
       _sheetShown = true;
       _showUpdateSheet();
@@ -121,7 +137,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
         onLearnMore: () => _openGooglePlay(context),
         onUpdate: () {
           Navigator.of(context).maybePop();
-          _controller?.startUpdate();
+          _startUpdate();
         },
       ),
     );
@@ -135,4 +151,109 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
     if (!mounted) return;
     await UrlLauncherHelper().openUrl(googlePlayUrl);
   }
+
+  void _showSnackBar(String message) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _formatUpdateInfo(AppUpdateInfo updateInfo) {
+    return 'availability=${updateInfo.updateAvailability.name}, '
+        'availableVersionCode=${updateInfo.availableVersionCode}, '
+        'installStatus=${updateInfo.installStatus.name}, '
+        'packageName=${updateInfo.packageName}, '
+        'flexibleAllowed=${updateInfo.flexibleUpdateAllowed}, '
+        'flexiblePreconditions=${updateInfo.flexibleAllowedPreconditions}, '
+        'immediateAllowed=${updateInfo.immediateUpdateAllowed}, '
+        'immediatePreconditions=${updateInfo.immediateAllowedPreconditions}, '
+        'stalenessDays=${updateInfo.clientVersionStalenessDays}, '
+        'priority=${updateInfo.updatePriority}';
+  }
+
+  /*
+   * Previous flexible-update flow kept here as a reference.
+   *
+   * Main differences:
+   * - The availability check used `updateInfo.flexibleUpdateAllowed`.
+   * - `_startUpdate` called `InAppUpdate.startFlexibleUpdate()`.
+   * - The app listened to `InAppUpdate.installUpdateListener`.
+   * - When `InstallStatus.downloaded` arrived, the app called
+   *   `InAppUpdate.completeFlexibleUpdate()`.
+   * - This package exposes install statuses only; it does not expose a real
+   *   download percentage.
+   *
+   * Example:
+   *
+   * StreamSubscription<InstallStatus>? _installSubscription;
+   *
+   * if (updateInfo.installStatus == InstallStatus.downloaded) {
+   *   await InAppUpdate.completeFlexibleUpdate();
+   *   _showSnackBar('Update downloaded. Restarting app update flow.');
+   *   return;
+   * }
+   *
+   * if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable &&
+   *     updateInfo.flexibleUpdateAllowed) {
+   *   _updateAvailable = true;
+   *   _scheduleUpdateSheet();
+   * }
+   *
+   * Future<void> _startFlexibleUpdate() async {
+   *   if (_isUpdating) return;
+   *
+   *   _isUpdating = true;
+   *   _listenForFlexibleUpdateCompletion();
+   *   try {
+   *     await InAppUpdate.startFlexibleUpdate();
+   *     l.d('In-app flexible update started.');
+   *   } on Object catch (error) {
+   *     await _installSubscription?.cancel();
+   *     _installSubscription = null;
+   *     _isUpdating = false;
+   *     l.d('In-app flexible update start error: $error');
+   *     _showSnackBar(error.toString());
+   *   }
+   * }
+   *
+   * void _listenForFlexibleUpdateCompletion() {
+   *   _installSubscription?.cancel();
+   *   _installSubscription = InAppUpdate.installUpdateListener.listen(
+   *     (status) async {
+   *       l.d('In-app update install status: ${status.name}');
+   *       switch (status) {
+   *         case InstallStatus.downloaded:
+   *           await _installSubscription?.cancel();
+   *           _installSubscription = null;
+   *           try {
+   *             await InAppUpdate.completeFlexibleUpdate();
+   *             _isUpdating = false;
+   *             _showSnackBar('Update downloaded. Restarting app update flow.');
+   *           } on Object catch (error) {
+   *             _isUpdating = false;
+   *             l.d('In-app flexible update complete error: $error');
+   *             _showSnackBar(error.toString());
+   *           }
+   *         case InstallStatus.failed:
+   *         case InstallStatus.canceled:
+   *           await _installSubscription?.cancel();
+   *           _installSubscription = null;
+   *           _isUpdating = false;
+   *           _showSnackBar('Update ${status.name}.');
+   *         case InstallStatus.unknown:
+   *         case InstallStatus.pending:
+   *         case InstallStatus.downloading:
+   *         case InstallStatus.installing:
+   *         case InstallStatus.installed:
+   *           break;
+   *       }
+   *     },
+   *     onError: (Object error) {
+   *       _isUpdating = false;
+   *       l.d('In-app update install listener error: $error');
+   *       _showSnackBar(error.toString());
+   *     },
+   *   );
+   * }
+   */
 }

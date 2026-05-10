@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:no_sleep/src/common/util/local_pagination_util.dart';
 import 'package:no_sleep/src/common/util/screen_util.dart';
+import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_host_widget.dart';
 import 'package:no_sleep/src/feature/initialization/widget/dependencies_scope.dart';
 import 'package:no_sleep/src/feature/reddit/controller/reddit_controller.dart';
 import 'package:no_sleep/src/feature/reddit/data/reddit_repository.dart';
@@ -62,12 +63,14 @@ class RedditConfigWidgetState extends State<RedditConfigWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => RedditConfigInhWidget(
-    state: this,
-    child: context.screenSizeMaybeWhen(
-      orElse: () => const RedditDesktopWidget(),
-      phone: () => const RedditMobileWidget(),
-      tablet: () => const RedditTabletWidget(),
+  Widget build(BuildContext context) => InAppUpdateHostWidget(
+    builder: (context) => RedditConfigInhWidget(
+      state: this,
+      child: context.screenSizeMaybeWhen(
+        orElse: () => const RedditDesktopWidget(),
+        phone: () => const RedditMobileWidget(),
+        tablet: () => const RedditTabletWidget(),
+      ),
     ),
   );
 }

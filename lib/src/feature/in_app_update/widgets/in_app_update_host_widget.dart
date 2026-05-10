@@ -25,6 +25,7 @@ class InAppUpdateHostWidget extends StatefulWidget {
 class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with WidgetsBindingObserver {
   InAppUpdateController? _controller;
   var _sheetShown = false;
+  var _sheetScheduled = false;
 
   @override
   void initState() {
@@ -73,22 +74,41 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
     InAppUpdateState current,
   ) {
     if (current is InAppUpdate$AvailableState && !_sheetShown) {
-      _sheetShown = true;
-      _showUpdateSheet();
+      _scheduleUpdateSheet();
     }
 
     if (current is InAppUpdate$CompletedState) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
         const SnackBar(content: Text('Update downloaded. Restarting app update flow.')),
       );
     }
 
     if (current is InAppUpdate$ErrorState) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(current.message)));
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(current.message)));
     }
   }
 
+  void _scheduleUpdateSheet() {
+    if (_sheetScheduled || _sheetShown) return;
+
+    _sheetScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sheetScheduled = false;
+      if (!mounted || _sheetShown) return;
+
+      if (Navigator.maybeOf(context) == null) {
+        _controller?.checkForUpdate();
+        return;
+      }
+
+      _sheetShown = true;
+      _showUpdateSheet();
+    });
+  }
+
   Future<void> _showUpdateSheet() async {
+    if (!mounted) return;
+
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: false,

@@ -1,3 +1,10 @@
+## [0.0.17] - 2026-05-10
+
+### Changed
+
+- Switched Android In-App Update flow from flexible updates to immediate updates.
+- Simplified In-App Update feature structure to keep update logic inside the widgets layer.
+
 ## [0.0.15] - 2026-05-10
 
 ### Fixed

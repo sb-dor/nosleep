@@ -1,3 +1,10 @@
+## [0.0.15] - 2026-05-10
+
+### Fixed
+
+- Moved the Android In-App Update host from the app builder into the Reddit feature screen.
+- Hardened the In-App Update bottom sheet against missing navigator or scaffold contexts.
+
 ## [0.0.11] - 2026-05-09
 
 ### Added

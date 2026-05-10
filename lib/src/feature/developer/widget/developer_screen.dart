@@ -18,7 +18,6 @@ class DeveloperScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     body: CustomScrollView(
       slivers: [
-        // --- App bar --- //
         SliverAppBar(
           title: Text(Localization.of(context).developer),
           floating: true,

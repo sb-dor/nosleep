@@ -89,7 +89,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
 
     _isUpdating = true;
     try {
-      // Current flow: immediate update. Google Play owns the visible update UI
+      // Current flow immediate update. Google Play owns the visible update UI
       // after the user accepts our custom bottom sheet.
       final result = await InAppUpdate.performImmediateUpdate();
       l.d('In-app immediate update result: $result');

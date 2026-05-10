@@ -172,7 +172,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
   }
 
   /*
-   * Previous flexible-update flow kept here as a reference.
+   * Previous flexible-update flow kept here as a reference
    *
    * Main differences:
    * - The availability check used `updateInfo.flexibleUpdateAllowed`.

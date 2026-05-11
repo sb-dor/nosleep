@@ -2,10 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:l/l.dart';
-import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/util/platform/availability/platform_availability.dart';
-import 'package:no_sleep/src/common/util/url_launcher_helper.dart';
-import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_bottom_sheet.dart';
 
 class InAppUpdateHostWidget extends StatefulWidget {
   const InAppUpdateHostWidget({
@@ -25,8 +22,6 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
   var _isChecking = false;
   var _isUpdating = false;
   var _updateAvailable = false;
-  var _sheetShown = false;
-  var _sheetScheduled = false;
 
   @override
   void initState() {
@@ -49,7 +44,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed || _sheetShown) return;
+    if (state != AppLifecycleState.resumed) return;
 
     _checkForUpdate();
   }
@@ -74,7 +69,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable &&
           updateInfo.immediateUpdateAllowed) {
         _updateAvailable = true;
-        _scheduleUpdateSheet();
+        await _startUpdate();
       }
     } on Object catch (error) {
       l.d('In-app update check error: $error');
@@ -89,8 +84,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
 
     _isUpdating = true;
     try {
-      // Current flow immediate update. Google Play owns the visible update UI
-      // after the user accepts our custom bottom sheet.
+      // Current flow: start the immediate Google Play update UI directly.
       final result = await InAppUpdate.performImmediateUpdate();
       l.d('In-app immediate update result: $result');
       if (result == AppUpdateResult.userDeniedUpdate) {
@@ -105,51 +99,6 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
       _isUpdating = false;
       _updateAvailable = false;
     }
-  }
-
-  void _scheduleUpdateSheet() {
-    if (_sheetScheduled || _sheetShown) return;
-
-    _sheetScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _sheetScheduled = false;
-      if (!mounted || _sheetShown) return;
-
-      if (Navigator.maybeOf(context) == null) return;
-
-      _sheetShown = true;
-      _showUpdateSheet();
-    });
-  }
-
-  Future<void> _showUpdateSheet() async {
-    if (!mounted) return;
-
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: false,
-      backgroundColor: const Color(0xFF171717),
-      barrierColor: Colors.black.withValues(alpha: 0.55),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) => InAppUpdateBottomSheet(
-        onLearnMore: () => _openGooglePlay(context),
-        onUpdate: () {
-          Navigator.of(context).maybePop();
-          _startUpdate();
-        },
-      ),
-    );
-  }
-
-  Future<void> _openGooglePlay(BuildContext context) async {
-    final googlePlayUrl = Pubspec.source['google_play'] as String?;
-    if (googlePlayUrl == null || googlePlayUrl.isEmpty) return;
-
-    Navigator.of(context).maybePop();
-    if (!mounted) return;
-    await UrlLauncherHelper().openUrl(googlePlayUrl);
   }
 
   void _showSnackBar(String message) {
@@ -170,6 +119,72 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
         'stalenessDays=${updateInfo.clientVersionStalenessDays}, '
         'priority=${updateInfo.updatePriority}';
   }
+
+  /*
+   * Previous custom-popup flow kept here as a reference.
+   *
+   * Required imports:
+   * import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
+   * import 'package:no_sleep/src/common/util/url_launcher_helper.dart';
+   * import 'package:no_sleep/src/feature/in_app_update/widgets/in_app_update_bottom_sheet.dart';
+   *
+   * Required state fields:
+   * var _sheetShown = false;
+   * var _sheetScheduled = false;
+   *
+   * Availability handling used to show our app popup first:
+   *
+   * if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable &&
+   *     updateInfo.immediateUpdateAllowed) {
+   *   _updateAvailable = true;
+   *   _scheduleUpdateSheet();
+   * }
+   *
+   * void _scheduleUpdateSheet() {
+   *   if (_sheetScheduled || _sheetShown) return;
+   *
+   *   _sheetScheduled = true;
+   *   WidgetsBinding.instance.addPostFrameCallback((_) {
+   *     _sheetScheduled = false;
+   *     if (!mounted || _sheetShown) return;
+   *
+   *     if (Navigator.maybeOf(context) == null) return;
+   *
+   *     _sheetShown = true;
+   *     _showUpdateSheet();
+   *   });
+   * }
+   *
+   * Future<void> _showUpdateSheet() async {
+   *   if (!mounted) return;
+   *
+   *   await showModalBottomSheet<void>(
+   *     context: context,
+   *     showDragHandle: false,
+   *     backgroundColor: const Color(0xFF171717),
+   *     barrierColor: Colors.black.withValues(alpha: 0.55),
+   *     shape: const RoundedRectangleBorder(
+   *       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+   *     ),
+   *     builder: (context) => InAppUpdateBottomSheet(
+   *       onLearnMore: () => _openGooglePlay(context),
+   *       onUpdate: () {
+   *         Navigator.of(context).maybePop();
+   *         _startUpdate();
+   *       },
+   *     ),
+   *   );
+   * }
+   *
+   * Future<void> _openGooglePlay(BuildContext context) async {
+   *   final googlePlayUrl = Pubspec.source['google_play'] as String?;
+   *   if (googlePlayUrl == null || googlePlayUrl.isEmpty) return;
+   *
+   *   Navigator.of(context).maybePop();
+   *   if (!mounted) return;
+   *   await UrlLauncherHelper().openUrl(googlePlayUrl);
+   * }
+   */
 
   /*
    * Previous flexible-update flow kept here as a reference

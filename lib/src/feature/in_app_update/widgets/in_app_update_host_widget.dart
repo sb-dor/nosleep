@@ -121,7 +121,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
   }
 
   /*
-   * Previous custom-popup flow kept here as a reference.
+   * Previous custom-popup flow kept here as a reference
    *
    * Required imports:
    * import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';

@@ -68,7 +68,7 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
 
     _isUpdating = true;
     try {
-      // Current flow: start the immediate Google Play update UI directly.
+      // Current flow: start the immediate Google Play update UI directly
       final result = await InAppUpdate.performImmediateUpdate();
       l.d('In-app immediate update result: $result');
       if (result == AppUpdateResult.userDeniedUpdate) {

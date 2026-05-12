@@ -55,9 +55,9 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
         _updateAvailable = true;
         await _startUpdate();
       }
-    } on Object catch (error) {
-      l.d('In-app update check error: $error');
-      _showSnackBar(error.toString());
+    } on Object catch (error, stackTrace) {
+      l.e('In-app update check error: $error');
+      Error.throwWithStackTrace(error, stackTrace);
     } finally {
       _isChecking = false;
     }
@@ -72,23 +72,17 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
       final result = await InAppUpdate.performImmediateUpdate();
       l.d('In-app immediate update result: $result');
       if (result == AppUpdateResult.userDeniedUpdate) {
-        _showSnackBar('Update canceled.');
+        l.d('Update canceled.');
       } else if (result == AppUpdateResult.inAppUpdateFailed) {
-        _showSnackBar('Update failed.');
+        l.d('Update failed.');
       }
-    } on Object catch (error) {
-      l.d('In-app update start error: $error');
-      _showSnackBar(error.toString());
+    } on Object catch (error, stackTrace) {
+      l.e('In-app update start error: $error');
+      Error.throwWithStackTrace(error, stackTrace);
     } finally {
       _isUpdating = false;
       _updateAvailable = false;
     }
-  }
-
-  void _showSnackBar(String message) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _formatUpdateInfo(AppUpdateInfo updateInfo) {

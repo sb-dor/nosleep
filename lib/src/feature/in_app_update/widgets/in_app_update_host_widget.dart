@@ -18,7 +18,7 @@ class InAppUpdateHostWidget extends StatefulWidget {
   State<InAppUpdateHostWidget> createState() => _InAppUpdateHostWidgetState();
 }
 
-class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with WidgetsBindingObserver {
+class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> {
   var _isChecking = false;
   var _isUpdating = false;
   var _updateAvailable = false;
@@ -27,26 +27,10 @@ class _InAppUpdateHostWidgetState extends State<InAppUpdateHostWidget> with Widg
   void initState() {
     super.initState();
     if (kInAppUpdatePlatform && widget.checkForUpdate) {
-      WidgetsBinding.instance.addObserver(this);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _checkForUpdate();
       });
     }
-  }
-
-  @override
-  void dispose() {
-    if (kInAppUpdatePlatform && widget.checkForUpdate) {
-      WidgetsBinding.instance.removeObserver(this);
-    }
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed) return;
-
-    _checkForUpdate();
   }
 
   @override

@@ -15,7 +15,7 @@ abstract interface class IGithubReportsRepository {
 
 // Implementation
 final class GithubReportsRepositoryImpl implements IGithubReportsRepository {
-  GithubReportsRepositoryImpl({required final http.Client apiClient}) : _apiClient = apiClient;
+  GithubReportsRepositoryImpl({required this._apiClient});
 
   final http.Client _apiClient;
 

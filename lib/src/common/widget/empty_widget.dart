@@ -5,6 +5,7 @@ class EmptyWidget extends StatelessWidget {
   const EmptyWidget({
     super.key,
     this.icon,
+    this.faIconData,
     this.title,
     this.subtitle,
     this.actionText,
@@ -12,6 +13,7 @@ class EmptyWidget extends StatelessWidget {
   });
 
   final IconData? icon;
+  final FaIconData? faIconData;
   final String? title;
   final String? subtitle;
   final String? actionText;
@@ -51,10 +53,10 @@ class EmptyWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(
-                  icon ?? FontAwesomeIcons.ghost,
-                  size: 60,
-                  color: const Color(0xFFd41132),
+                child: Center(
+                  child: icon != null
+                      ? Icon(icon, size: 60, color: const Color(0xFFd41132))
+                      : FaIcon(faIconData ?? FontAwesomeIcons.ghost),
                 ),
               ),
             ),
@@ -154,7 +156,7 @@ class EmptyArticlesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyWidget(
-      icon: FontAwesomeIcons.ghost,
+      faIconData: FontAwesomeIcons.ghost,
       title: 'No Articles Found',
       subtitle: 'The darkness is empty...\nTry searching for different subreddits or stories.',
       actionText: onRetry != null ? 'Retry' : null,
@@ -171,7 +173,7 @@ class EmptySearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyWidget(
-      icon: FontAwesomeIcons.magnifyingGlass,
+      faIconData: FontAwesomeIcons.magnifyingGlass,
       title: 'No Results',
       subtitle: 'We couldn\'t find any stories matching your search.\nTry different keywords.',
       actionText: onClear != null ? 'Clear Search' : null,
@@ -186,7 +188,7 @@ class EmptyBookmarksWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const EmptyWidget(
-      icon: FontAwesomeIcons.bookmark,
+      faIconData: FontAwesomeIcons.bookmark,
       title: 'No Bookmarks',
       subtitle: 'You haven\'t saved any stories yet.\nStart exploring and bookmark your favorites!',
     );
@@ -201,7 +203,7 @@ class NoConnectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyWidget(
-      icon: FontAwesomeIcons.wifi,
+      faIconData: FontAwesomeIcons.wifi,
       title: 'No Connection',
       subtitle: 'Unable to connect to the darkness.\nCheck your internet connection and try again.',
       actionText: 'Retry',

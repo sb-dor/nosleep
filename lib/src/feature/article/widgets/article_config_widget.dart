@@ -44,7 +44,7 @@ class ArticleConfigWidgetState extends State<ArticleConfigWidget> {
     super.initState();
     articleController = ArticleController(
       // articleRepository: kIsWeb || kIsWasm ? ArticleJSRepositoryImpl() : ArticleRepositoryImpl(),
-      articleRepository: ArticleJSRepositoryImpl(),
+      articleRepository: ArticleRepositoryImpl(),
     );
     articleController.article(widget.postId);
   }

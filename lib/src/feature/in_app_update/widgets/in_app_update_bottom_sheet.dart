@@ -61,7 +61,7 @@ class InAppUpdateBottomSheet extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(
+                          const FaIcon(
                             FontAwesomeIcons.googlePlay,
                             color: Color(0xFFd41132),
                             size: 18,

@@ -42,7 +42,7 @@ class _RedditMobileWidgetState extends State<RedditMobileWidget> with RedditStat
               forceMaterialTransparency: true,
               title: Row(
                 children: [
-                  const Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132), size: 20),
+                  const FaIcon(FontAwesomeIcons.skull, color: Color(0xFFd41132), size: 20),
                   const SizedBox(width: 8),
                   Text(
                     redditDataController.subreddit,

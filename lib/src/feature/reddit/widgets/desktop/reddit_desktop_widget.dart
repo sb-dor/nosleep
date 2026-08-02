@@ -53,7 +53,7 @@ class _RedditDesktopWidgetState extends State<RedditDesktopWidget> with RedditSt
                           padding: const EdgeInsets.all(20),
                           child: Row(
                             children: [
-                              const Icon(FontAwesomeIcons.skull, color: Color(0xFFd41132)),
+                              const FaIcon(FontAwesomeIcons.skull, color: Color(0xFFd41132)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(

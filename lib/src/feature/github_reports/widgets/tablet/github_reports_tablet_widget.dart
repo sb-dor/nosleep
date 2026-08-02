@@ -26,7 +26,7 @@ class _GithubReportsTabletWidgetState extends State<GithubReportsTabletWidget>
             forceMaterialTransparency: true,
             title: const Row(
               children: [
-                Icon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 24),
+                FaIcon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 24),
                 SizedBox(width: 12),
                 Text(
                   'Report Issue',

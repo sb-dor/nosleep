@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ErrorWidget extends StatelessWidget {
-  const ErrorWidget({super.key, required this.onRetry, this.icon, this.title});
+  const ErrorWidget({super.key, required this.onRetry, this.iconData, this.faIconData, this.title});
 
   final VoidCallback onRetry;
-  final IconData? icon;
+  final IconData? iconData;
+  final FaIconData? faIconData;
   final String? title;
 
   @override
@@ -42,10 +43,14 @@ class ErrorWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(
-                  icon ?? FontAwesomeIcons.skullCrossbones,
-                  size: 50,
-                  color: const Color(0xFFd41132),
+                child: Center(
+                  child: iconData != null
+                      ? Icon(iconData, size: 50, color: const Color(0xFFd41132))
+                      : FaIcon(
+                          faIconData ?? FontAwesomeIcons.skullCrossbones,
+                          size: 50,
+                          color: const Color(0xFFd41132),
+                        ),
                 ),
               ),
             ),
@@ -111,7 +116,7 @@ class _TryAgainButtonState extends State<TryAgainButton> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(FontAwesomeIcons.arrowRotateRight, size: 18),
+            const FaIcon(FontAwesomeIcons.arrowRotateRight, size: 18),
             const SizedBox(width: 12),
             Text(
               widget.text ?? 'Try again',
@@ -132,7 +137,11 @@ class NetworkErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ErrorWidget(icon: FontAwesomeIcons.wifi, title: 'Connection Lost', onRetry: onRetry);
+    return ErrorWidget(
+      faIconData: FontAwesomeIcons.wifi,
+      title: 'Connection Lost',
+      onRetry: onRetry,
+    );
   }
 }
 
@@ -144,7 +153,11 @@ class ServerErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ErrorWidget(icon: FontAwesomeIcons.server, title: 'Server Error', onRetry: onRetry);
+    return ErrorWidget(
+      faIconData: FontAwesomeIcons.server,
+      title: 'Server Error',
+      onRetry: onRetry,
+    );
   }
 }
 
@@ -156,7 +169,7 @@ class NotFoundErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ErrorWidget(
-      icon: FontAwesomeIcons.solidQuestionCircle,
+      faIconData: FontAwesomeIcons.solidQuestionCircle,
       title: 'Not Found',
       onRetry: onRetry,
     );
@@ -193,7 +206,7 @@ class SliverErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverFillRemaining(
-      child: ErrorWidget(onRetry: onRetry, icon: icon, title: title),
+      child: ErrorWidget(onRetry: onRetry, iconData: icon, title: title),
     );
   }
 }

@@ -24,11 +24,10 @@ sealed class RedditState with _$RedditState {
 
 final class RedditController extends StateController<RedditState> with SequentialControllerHandler {
   RedditController({
-    required final IRedditRepository redditRepository,
-    required final LocalPaginationUtil localPaginationUtil,
+    required this._redditRepository,
+    required this._localPaginationUtil,
     super.initialState = const RedditState.initial(),
-  }) : _redditRepository = redditRepository,
-       _localPaginationUtil = localPaginationUtil;
+  });
 
   final IRedditRepository _redditRepository;
   final LocalPaginationUtil _localPaginationUtil;

@@ -23,7 +23,7 @@ class _GithubReportsMobileWidgetState extends State<GithubReportsMobileWidget>
         forceMaterialTransparency: true,
         title: const Row(
           children: [
-            Icon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 20),
+            FaIcon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 20),
             SizedBox(width: 12),
             Text(
               'Report Issue',

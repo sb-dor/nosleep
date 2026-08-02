@@ -5,7 +5,7 @@ inputs:
   flutter-version:
     description: 'The version of Flutter to use'
     required: false
-    default: '3.38.10'
+    default: '3.44.7'
   pub-cache:
     description: 'The name of the pub cache variable'
     required: false
@@ -49,11 +49,6 @@ runs:
         echo /home/runner/.pub-cache/bin >> $GITHUB_PATH
         flutter config --no-cli-animations --no-analytics
         flutter pub get
-
-    - name: ⏲️ Run build runner
-      shell: bash
-      run: |
-        dart run build_runner build --delete-conflicting-outputs --release
 
     - name: 📥 Save Pub modules
       id: cache-pub-save

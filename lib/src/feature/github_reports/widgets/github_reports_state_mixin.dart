@@ -172,7 +172,7 @@ mixin GithubReportsStateMixin<W extends StatefulWidget> on State<W> {
                 children: [
                   const Row(
                     children: [
-                      Icon(FontAwesomeIcons.github, color: Color(0xFF32d456), size: 20),
+                      FaIcon(FontAwesomeIcons.github, color: Color(0xFF32d456), size: 20),
                       SizedBox(width: 10),
                       Text(
                         'View on GitHub',

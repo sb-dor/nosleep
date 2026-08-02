@@ -26,7 +26,7 @@ class _GithubReportsDesktopWidgetState extends State<GithubReportsDesktopWidget>
             forceMaterialTransparency: true,
             title: const Row(
               children: [
-                Icon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 28),
+                FaIcon(FontAwesomeIcons.github, color: Color(0xFFd41132), size: 28),
                 SizedBox(width: 16),
                 Text(
                   'Report Issue',

@@ -47,7 +47,7 @@ class RedditConfigWidgetState extends State<RedditConfigWidget> {
       // redditRepository: kIsWeb || kIsWasm
       //     ? RedditJSRepositoryImpl(apiClient: dependencies.apiClient)
       //     : RedditRepositoryImpl(apiClient: dependencies.apiClient),
-      redditRepository: RedditJSRepositoryImpl(apiClient: dependencies.apiClient),
+      redditRepository: RedditRepositoryImpl(apiClient: dependencies.apiClient),
       localPaginationUtil: LocalPaginationUtil(),
     );
     redditDataController = RedditDataController();

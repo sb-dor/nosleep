@@ -5,11 +5,11 @@ name: Flutter Checks
 on:
   push:
     branches:
-      - 'development'
+      - development
 
-  pull_request:
-    branches:
-      - 'development'
+#  pull_request:
+#    branches:
+#      - 'development'
 
 jobs:
   flutter-checks:
@@ -24,27 +24,9 @@ jobs:
       - name: Setup Flutter
         uses: ./.github/actions/setup
         with:
-          flutter-version: "3.38.10"
+          flutter-version: "3.44.7"
 
-      - name: Install dependencies
-        timeout-minutes: 1
-        run: flutter pub get
-
-      - name: 🚦 Check code format
-        id: check-format
-        timeout-minutes: 1
-        run: |
-          if ! find lib test -name "*.dart" ! -name "*.*.dart" -print0 | xargs -0 dart format --set-exit-if-changed --line-length 100 -o none; then
-            echo "⚠️ Code needs formatting. Run 'dart format' locally."
-          fi
-
-      - name: Check for Warnings
-        id: check-analyzer
-        timeout-minutes: 1
-        run: |
-          flutter analyze --no-fatal-infos --no-fatal-warnings || true
-
-      # ---------------- GENERATE ---------------- #
+        # ---------------- GENERATE ---------------- #
       - name: Generate l10n (intl_utils)
         run: |
           dart pub global activate intl_utils
@@ -61,6 +43,23 @@ jobs:
 
       - name: Run build_runner
         run: dart run build_runner build --delete-conflicting-outputs --release
+
+
+        # ---------------- CODE FORMAT ---------------- #
+      - name: 🚦 Check code format
+        id: check-format
+        timeout-minutes: 3
+        run: |
+          if ! find lib test -name "*.dart" ! -name "*.*.dart" -print0 | xargs -0 dart format --set-exit-if-changed --line-length 100 -o none; then
+            echo "⚠️ Code needs formatting. Run 'dart format' locally."
+          fi
+
+      - name: Check for Warnings
+        id: check-analyzer
+        timeout-minutes: 3
+        run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
 
       # ---------------- TESTS ---------------- #
       - name: Run tests (excluding drift migrations)

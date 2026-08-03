@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:no_sleep/src/common/model/app_metadata.dart';
-import 'package:no_sleep/src/common/util/api_client.dart';
+import 'package:no_sleep/src/common/util/api_client/api_client.dart';
 import 'package:no_sleep/src/feature/initialization/widget/dependencies_scope.dart';
 
 /// {@template dependencies}

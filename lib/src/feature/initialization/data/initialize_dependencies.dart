@@ -8,7 +8,7 @@ import 'package:no_sleep/src/common/constant/config.dart';
 import 'package:no_sleep/src/common/constant/pubspec.yaml.g.dart';
 import 'package:no_sleep/src/common/controller/controller_observer.dart';
 import 'package:no_sleep/src/common/model/app_metadata.dart';
-import 'package:no_sleep/src/common/util/api_client.dart';
+import 'package:no_sleep/src/common/util/api_client/api_client.dart';
 import 'package:no_sleep/src/common/util/middleware/logger_mw.dart';
 import 'package:no_sleep/src/common/util/screen_util.dart';
 import 'package:no_sleep/src/feature/initialization/data/platform/platform_initialization.dart';
@@ -67,6 +67,7 @@ final Map<String, _InitializationStep> _initializationSteps = <String, _Initiali
   'Get remote config': (_) {},
   'Restore settings': (_) {},
   'API Client': (dependencies) => dependencies.apiClient = ApiClient(
+    // client: await httpClient(),
     baseUrl: Config.apiBaseUrl,
     middlewares: [
       //

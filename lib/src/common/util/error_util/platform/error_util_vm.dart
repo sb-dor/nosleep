@@ -1,8 +1,12 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:no_sleep/src/common/util/api_client/api_client.dart';
 
 Future<void> $captureException(Object exception, StackTrace stackTrace, String? hint, bool fatal) {
+  if (exception is APIClientException$Authorization) return Future<void>.value();
+  if (exception is String && exception == 'User is not authorized.') return Future<void>.value();
+
   if (kReleaseMode && defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS) {
     return FirebaseCrashlytics.instance.recordError(exception, stackTrace, fatal: true);

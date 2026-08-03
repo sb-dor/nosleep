@@ -11,7 +11,11 @@ const successStatusCodes = <int>[200, 201, 202, 203, 204];
 /// A function that takes a [http_package.BaseRequest] and returns a [http_package.StreamedResponse].
 /// The [context] parameter is a map that can be used to store datasources that should be available to all middleware.
 typedef ApiClientHandler =
-    Future<APIClientResponse> Function(APIClientRequest request, Map<String, Object?> context);
+    Future<APIClientResponse> Function(
+      APIClientRequest request,
+      Map<String, Object?> context,
+      void Function(String message)? onServerErrorMessage,
+    );
 
 /// A function that takes a [ApiClientHandler] and returns a [ApiClientHandler].
 typedef ApiClientMiddleware = ApiClientHandler Function(ApiClientHandler innerHandler);
@@ -20,19 +24,34 @@ typedef ApiClientMiddleware = ApiClientHandler Function(ApiClientHandler innerHa
 extension type ApiClientMiddlewareWrapper._(ApiClientMiddleware _fn) {
   /// Creates a new [ApiClientMiddleware] from the given callbacks.
   factory ApiClientMiddlewareWrapper({
-    Future<void> Function(APIClientRequest request, Map<String, Object?> context)? onRequest,
-    Future<void> Function(APIClientResponse response, Map<String, Object?> context)? onResponse,
-    Future<void> Function(Object error, StackTrace stackTrace, Map<String, Object?> context)?
+    Future<void> Function(
+      APIClientRequest request,
+      Map<String, Object?> context,
+      void Function(String message)? onServerErrorMessage,
+    )?
+    onRequest,
+    Future<void> Function(
+      APIClientResponse response,
+      Map<String, Object?> context,
+      void Function(String message)? onServerErrorMessage,
+    )?
+    onResponse,
+    Future<void> Function(
+      Object error,
+      StackTrace stackTrace,
+      Map<String, Object?> context,
+      void Function(String message)? onServerErrorMessage,
+    )?
     onError,
   }) => ApiClientMiddlewareWrapper._(
-    (innerHandler) => (request, context) async {
-      await onRequest?.call(request, context);
+    (innerHandler) => (request, context, onServerErrorMessage) async {
+      await onRequest?.call(request, context, onServerErrorMessage);
       try {
-        final response = await innerHandler(request, context);
-        await onResponse?.call(response, context);
+        final response = await innerHandler(request, context, onServerErrorMessage);
+        await onResponse?.call(response, context, onServerErrorMessage);
         return response;
       } on Object catch (error, stackTrace) {
-        await onError?.call(error, stackTrace, context);
+        await onError?.call(error, stackTrace, context, onServerErrorMessage);
         rethrow;
       }
     },
@@ -129,6 +148,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     required Map<String, String>? headers,
     required Map<String, Object?>? body,
     required Map<String, Object?> context,
+    void Function(String message)? onServerErrorMessage,
   }) {
     final finalUrl = queryParameters == null
         ? url
@@ -148,7 +168,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
               .bodyBytes =
           bytes;
     }
-    return handler(APIClientRequest(request), context);
+    return handler(APIClientRequest(request), context, onServerErrorMessage);
   }
 
   /// Sends a GET request to the given [path].
@@ -156,7 +176,8 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     String path, {
     Map<String, String?>? queryParameters,
     Map<String, String>? headers,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const Duration(seconds: 90),
+    void Function(String message)? onServerErrorMessage,
   }) =>
       _sendUnstreamed(
         handler: _handler,
@@ -166,6 +187,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
         headers: headers,
         body: null,
         context: <String, Object?>{},
+        onServerErrorMessage: onServerErrorMessage,
       ).timeout(
         timeout,
         onTimeout: () => throw APIClientException$Network(
@@ -183,7 +205,8 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     Map<String, String>? headers,
     Map<String, String?>? queryParameters,
     Map<String, Object?>? body,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const Duration(seconds: 90),
+    void Function(String message)? onServerErrorMessage,
   }) =>
       _sendUnstreamed(
         handler: _handler,
@@ -193,6 +216,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
         headers: headers,
         body: body,
         context: <String, Object?>{},
+        onServerErrorMessage: onServerErrorMessage,
       ).timeout(
         timeout,
         onTimeout: () => throw APIClientException$Network(
@@ -209,7 +233,8 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     Map<String, String>? headers,
     Map<String, String?>? queryParameters,
     Map<String, Object?>? body,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const Duration(seconds: 90),
+    void Function(String message)? onServerErrorMessage,
   }) =>
       _sendUnstreamed(
         handler: _handler,
@@ -219,6 +244,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
         headers: headers,
         body: body,
         context: <String, Object?>{},
+        onServerErrorMessage: onServerErrorMessage,
       ).timeout(
         timeout,
         onTimeout: () => throw APIClientException$Network(
@@ -235,7 +261,8 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     Map<String, String>? headers,
     Map<String, String?>? queryParameters,
     Map<String, Object?>? body,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const Duration(seconds: 90),
+    void Function(String message)? onServerErrorMessage,
   }) =>
       _sendUnstreamed(
         handler: _handler,
@@ -245,6 +272,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
         headers: headers,
         body: body,
         context: <String, Object?>{},
+        onServerErrorMessage: onServerErrorMessage,
       ).timeout(
         timeout,
         onTimeout: () => throw APIClientException$Network(
@@ -261,7 +289,8 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
     Map<String, String>? headers,
     Map<String, String?>? queryParameters,
     Map<String, Object?>? body,
-    Duration timeout = const Duration(seconds: 30),
+    Duration timeout = const Duration(seconds: 90),
+    void Function(String message)? onServerErrorMessage,
   }) =>
       _sendUnstreamed(
         handler: _handler,
@@ -271,6 +300,7 @@ class ApiClient /* with http_package.BaseClient implements http_package.Client *
         headers: headers,
         body: body,
         context: <String, Object?>{},
+        onServerErrorMessage: onServerErrorMessage,
       ).timeout(
         timeout,
         onTimeout: () => throw APIClientException$Network(
@@ -313,7 +343,11 @@ ApiClientHandler _createHandler(
       .cast<Object?, Map<String, Object?>>();
 
   // HTTP handler.
-  Future<APIClientResponse> httpHandler(APIClientRequest request, Map<String, Object?> context) {
+  Future<APIClientResponse> httpHandler(
+    APIClientRequest request,
+    Map<String, Object?> context,
+    void Function(String message)? onServerErrorMessage,
+  ) {
     final completer = Completer<APIClientResponse>();
     // Handle top level errors.
     runZonedGuarded<void>(
@@ -325,6 +359,7 @@ ApiClientHandler _createHandler(
         try {
           streamedResponse = await internalClient.send(request._request);
         } on Object catch (error, stackTrace) {
+          onServerErrorMessage?.call('Network: Failed to send request due to a network error.');
           throwError(
             completer,
             APIClientException$Network(
@@ -345,6 +380,7 @@ ApiClientHandler _createHandler(
           statusCode = streamedResponse.statusCode;
           switch (statusCode) {
             case > 499:
+              onServerErrorMessage?.call('>=500: Internal server error');
               throw APIClientException$Network(
                 code: 'internal_server_error',
                 message: 'Internal server error.',
@@ -353,6 +389,7 @@ ApiClientHandler _createHandler(
                 data: null,
               );
             case 401 || 403:
+              onServerErrorMessage?.call('401 | 403: User is not authorized');
               throw APIClientException$Authorization(
                 code: 'unauthorized_error',
                 message: 'User is not authorized.',
@@ -373,9 +410,24 @@ ApiClientHandler _createHandler(
                 ..e('---Server statusCode: ${streamedResponse.statusCode}')
                 ..e('---Reason: ${streamedResponse.reasonPhrase}')
                 ..e('---Body: $body');
+
+              if (body case {
+                'error_data': Map<String, Object?> errorData,
+                'message': String? message,
+              }) {
+                if (errorData case {'items': List<Object?> items, 'key': 'not_enough_qty'}) {
+                  throw APIServerNotEnoughQtyException(
+                    code: 'not_enough_qty',
+                    message: message ?? 'Something went wrong: $body',
+                    statusCode: statusCode,
+                    data: items.whereType<String>().toList(),
+                  );
+                }
+              }
+              onServerErrorMessage?.call('>=400: Something went wrong with the client: $body');
               throw APIClientException$400(
                 code: 'Client exception',
-                message: 'Something went wrong with the client',
+                message: 'Something went wrong with the client: $body',
                 statusCode: statusCode,
                 error: body,
                 data: null,
@@ -393,9 +445,10 @@ ApiClientHandler _createHandler(
                 ..e('---Server statusCode: ${streamedResponse.statusCode}')
                 ..e('---Reason: ${streamedResponse.reasonPhrase}')
                 ..e('---Body: $body');
+              onServerErrorMessage?.call('>=300: Server was redirected: $body');
               throw APIClientException$300(
                 code: 'Redirection exception',
-                message: 'Server was redirected',
+                message: 'Server was redirected: $body',
                 statusCode: statusCode,
                 error: body,
                 data: null,
@@ -448,7 +501,6 @@ ApiClientHandler _createHandler(
               l
                 ..w('Received non-JSON response: $contentType')
                 ..w('Body: ${utf8.decode(bytes)}');
-
               throwError(
                 completer,
                 APIClientException$Client(
@@ -661,4 +713,29 @@ final class APIClientException$300 extends APIClientException {
 
   @override
   final Object? data;
+}
+
+final class APIServerNotEnoughQtyException extends APIClientException {
+  const APIServerNotEnoughQtyException({
+    required this.code,
+    required this.message,
+    required this.statusCode,
+    this.error,
+    this.data,
+  });
+
+  @override
+  final String code;
+
+  @override
+  final String message;
+
+  @override
+  final int statusCode;
+
+  @override
+  final Object? error;
+
+  @override
+  final List<String>? data;
 }

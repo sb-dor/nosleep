@@ -1,4 +1,4 @@
-import 'package:no_sleep/src/common/util/api_client.dart';
+import 'package:no_sleep/src/common/util/api_client/api_client.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_json_converter.dart';
 import 'package:no_sleep/src/feature/reddit/models/reddit_post_type.dart';

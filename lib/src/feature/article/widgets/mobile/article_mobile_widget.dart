@@ -23,7 +23,6 @@ class ArticleMobileWidget extends StatefulWidget {
 class _ArticleMobileWidgetState extends State<ArticleMobileWidget> {
   late final _config = ArticleConfigInhWidget.of(context);
   late final _controller = _config.articleController;
-  late final _postId = _config.postId;
 
   @override
   Widget build(BuildContext context) {

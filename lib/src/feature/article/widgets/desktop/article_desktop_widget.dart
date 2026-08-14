@@ -15,7 +15,6 @@ class ArticleDesktopWidget extends StatefulWidget {
 class _ArticleDesktopWidgetState extends State<ArticleDesktopWidget> {
   late final _config = ArticleConfigInhWidget.of(context);
   late final _controller = _config.articleController;
-  late final _postId = _config.postId;
 
   @override
   Widget build(BuildContext context) {

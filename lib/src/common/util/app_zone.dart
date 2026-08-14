@@ -5,6 +5,7 @@ import 'package:no_sleep/src/common/util/error_util/error_util.dart';
 import 'package:platform_info/platform_info.dart';
 
 /// Catch all application errors and logs.
+// ignore: experimental_member_use — `l.capture` is the package's only zone-capture API.
 void appZone(Future<void> Function() fn) => l.capture<void>(
   () => runZonedGuarded<void>(() => fn(), ErrorUtil.logError),
   LogOptions(

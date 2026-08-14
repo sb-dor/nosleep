@@ -3,11 +3,9 @@ class LocalPaginationUtil {
 
   int checkIsListHasMorePageInt<T>({required List<T> list, required int page, int? limitInPage}) {
     if (list.length < (limitInPage ?? _paginationPerPage)) {
-      page = 1;
-    } else {
-      page++;
+      return 1;
     }
-    return page;
+    return page + 1;
   }
 
   //this fun will check is there more list in pag (returns boolean)

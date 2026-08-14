@@ -169,7 +169,7 @@ class NotFoundErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ErrorWidget(
-      faIconData: FontAwesomeIcons.solidQuestionCircle,
+      faIconData: FontAwesomeIcons.solidCircleQuestion,
       title: 'Not Found',
       onRetry: onRetry,
     );

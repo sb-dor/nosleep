@@ -1,24 +1,36 @@
 #!/bin/bash
 
-# Run dart format in all packages of the project that have a pubspec.yaml file
-find app core feature -type f -name "pubspec.yaml" -exec dirname {} \; | while read -r dir; do
-  if [ -f "$dir/pubspec.yaml" ]; then
-    pushd $dir
-    printf "\nFormatting $dir\n"
+# Verifies formatting of hand-written Dart sources.
+#
+# Excluded:
+#   - *.*.dart                              (*.g.dart, *.freezed.dart, *.gen.dart, ...)
+#   - lib/src/common/localization/generated  (intl_utils output, not formatter-clean)
+#
+# Pass CHECK_ONLY=0 to rewrite files in place instead of just checking.
 
-    dirs=(lib test)
+set -euo pipefail
 
-    targets=()
-    for d in "${dirs[@]}"; do
-      [[ -d $d ]] && targets+=("$d")
-    done
+cd "$(dirname "$0")/.."
 
-    # Only run find if at least one target exists
-    if ((${#targets[@]})); then
-      find "${targets[@]}" \
-        -name '*.dart' ! -name '*.*.dart' \
-        -exec dart format --line-length 100 {} +
-    fi
-    popd
-  fi
+CHECK_ONLY="${CHECK_ONLY:-1}"
+
+if [[ "$CHECK_ONLY" == "1" ]]; then
+  FORMAT_ARGS=(--set-exit-if-changed -o none)
+else
+  FORMAT_ARGS=()
+fi
+
+targets=()
+for d in lib test; do
+  [[ -d "$d" ]] && targets+=("$d")
 done
+
+if ((${#targets[@]} == 0)); then
+  echo "No lib/ or test/ directory to format."
+  exit 0
+fi
+
+find "${targets[@]}" \
+  -path 'lib/src/common/localization/generated' -prune -o \
+  -name '*.dart' ! -name '*.*.dart' -print0 |
+  xargs -0 dart format --line-length 100 "${FORMAT_ARGS[@]}"

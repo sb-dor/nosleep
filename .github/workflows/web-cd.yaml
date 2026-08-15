@@ -39,6 +39,11 @@ jobs:
         env:
           PRODUCTION_CONFIG: ${{ secrets.PRODUCTION_CONFIG_JSON_BASE64 }}
 
+      - name: Create firebase_options
+        run: 'echo "$FIREBASE_OPTIONS" | base64 --decode > lib/firebase_options.dart'
+        env:
+          FIREBASE_OPTIONS: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:

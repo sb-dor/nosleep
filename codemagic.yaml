@@ -8,6 +8,18 @@ workflows:
     name: Flutter Android 
     instance_type: mac_mini_m2 # Other available machine types: mac_mini_m4, mac_studio_m4_max, linux_x2, linux_x4, windows_x2
     max_build_duration: 120
+    # NOT TRIGGERING ON PUSH? This block only FILTERS incoming events - it cannot
+    # make GitHub send them. Check these in order:
+    #   1. Webhook exists: github.com/sb-dor/nosleep -> Settings -> Webhooks.
+    #      Look for api.codemagic.io/hooks/... If missing, create it from the
+    #      Codemagic side: app -> Settings -> Webhooks -> "Create webhook".
+    #      If it exists, open "Recent Deliveries" - it shows whether GitHub sent
+    #      the push and what Codemagic answered.
+    #   2. App is in yaml mode, not the Workflow Editor (which ignores this file).
+    #   3. You actually pushed - check `git status -sb` for "ahead N".
+    #   4. Codemagic reads codemagic.yaml from the PUSHED branch, so changes to
+    #      this block must be merged into main before pushes to main will build.
+    # Docs: https://docs.codemagic.io/yaml-running-builds/webhooks/
     triggering:
         events:
           - push
@@ -28,14 +40,6 @@ workflows:
       - name: Set up local.properties
         script: |
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-      - name: Set up key.properties
-        script: |
-          cat > "$CM_BUILD_DIR/android/key.properties" <<EOF
-          storePassword=$CM_KEYSTORE_PASSWORD
-          keyPassword=$CM_KEY_PASSWORD
-          keyAlias=$CM_KEY_ALIAS
-          storeFile=$CM_KEYSTORE_PATH
-          EOF
       - name: Get Flutter packages
         script: |
           flutter packages pub get
@@ -66,7 +70,7 @@ workflows:
       - name: Upload debug symbols to Crashlytics
         script: |
           firebase crashlytics:symbols:upload \
-            --app=${{ secrets.ANDROID_FIREBASE_APP_ID }} \
+            --app=$ANDROID_FIREBASE_APP_ID \
             build/debug-info
     publishing:
       email:

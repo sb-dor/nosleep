@@ -53,7 +53,7 @@ jobs:
           export FIREBASE_CREDENTIALS=$HOME/firebase_key.json
 
       - name: Build Web App
-        run: make build-web-with-no-generation
+        run: flutter build web --release --dart-define-from-file=config/production.json
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --only hosting --project nosleep

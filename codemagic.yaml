@@ -72,6 +72,12 @@ workflows:
           firebase crashlytics:symbols:upload \
             --app=$ANDROID_FIREBASE_APP_ID \
             build/debug-info
+    # Required for publishing: anything not matched here is discarded with the VM,
+    # and google_play below has nothing to upload ("No artifacts were found").
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - build/debug-info/**
     publishing:
       email:
         recipients:

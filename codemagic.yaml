@@ -36,61 +36,46 @@ workflows:
         PACKAGE_NAME: "com.sbdor.nosleep" # <-- Put your package name here
         GOOGLE_PLAY_TRACK: "production"
       flutter: 3.44.7
+
     scripts:
       - name: Set up local.properties
         script: |
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-      # Parsed early so a malformed CHANGELOG fails the build before the ~4min AAB build.
-      # Codemagic picks up release_notes.txt from the repo root on its own and publishes
-      # it to Google Play under the en-US localization - no distribution/whatsnew copy
-      # needed (that was only for the r0adkll GitHub Action).
-      # https://docs.codemagic.io/yaml-notification/publish-release-notes/
-      - name: Extract latest changelog entry
-        script: |
-          #!/usr/bin/env bash
-          VERSION=$(grep -m 1 '## \[' CHANGELOG.md | sed 's/## \[\(.*\)\].*/\1/')
-          NOTES=$(awk '/^## \[/{found++} found==1{print} found==2{exit}' CHANGELOG.md | tail -n +2)
 
-          # Take complete lines that fit within Google Play's 500 character limit
-          TRUNCATED=""
-          while IFS= read -r line; do
-            TEST="${TRUNCATED}${line}"$'\n'
-            if [ ${#TEST} -gt 500 ]; then
-              break
-            fi
-            TRUNCATED="$TEST"
-          done <<< "$NOTES"
-
-          # Remove trailing ### headers without content
-          NOTES=$(echo "$TRUNCATED" | sed '/^### [A-Za-z]*[[:space:]]*$/d')
-
-          echo "$NOTES" > release_notes.txt
-          echo "APP_VERSION=$VERSION" >> $CM_ENV
-
-          echo "✅ Extracted version: $VERSION"
-          echo "📝 Release notes:"
-          echo "$NOTES"
       - name: Get Flutter packages
         script: |
           flutter packages pub get
+
       - name: Generate code (l10n, assets, build_runner)
         script: bash scripts/generate.bash
+
+
       - name: Setup Firebase CLI
         script: |
           curl -sL https://firebase.tools | bash
           firebase --version
+
+
       - name: Authenticate with Firebase
         script: |
           echo "$FIREBASE_CREDENTIALS_BASE64" | base64 --decode > $HOME/firebase_key.json
+
+
       - name: Create google_service_json for Android
         script: |
           echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > android/app/google-services.json
+
+
       - name: Config production json file setup
         script: |
           echo "$PRODUCTION_CONFIG_JSON_BASE64" | base64 --decode > config/production.json
+
+
       - name: Create firebase_options
         script: | 
           echo "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
+
+
       - name: Build AAB with Flutter
         script: |
             flutter build appbundle --release \
@@ -102,6 +87,7 @@ workflows:
           firebase crashlytics:symbols:upload \
             --app=$ANDROID_FIREBASE_APP_ID \
             build/debug-info
+            
     # Required for publishing: anything not matched here is discarded with the VM,
     # and google_play below has nothing to upload ("No artifacts were found").
     artifacts:

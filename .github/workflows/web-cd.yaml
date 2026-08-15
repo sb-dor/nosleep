@@ -53,7 +53,7 @@ jobs:
           export FIREBASE_CREDENTIALS=$HOME/firebase_key.json
 
       - name: Build Web App
-        run: make build-web
+        run: make build-web-with-no-generation
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --only hosting --project nosleep

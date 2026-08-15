@@ -1,3 +1,6 @@
+# android - https://github.com/codemagic-ci-cd/codemagic-sample-projects/blob/main/flutter/flutter-android-and-ios-yaml-demo-project/codemagic.yaml
+# android - https://docs.codemagic.io/yaml-quick-start/building-a-flutter-app/#conclusion
+
 workflows:
   flutter-android:
     name: Flutter Android 
@@ -5,13 +8,13 @@ workflows:
     max_build_duration: 120
     environment:
       android_signing:
-        - codemagic_keystore
+        - nosleep_jks
       groups:
         - google_play # <-- (Includes GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS)
       vars:
-        PACKAGE_NAME: "io.codemagic.flutter" # <-- Put your package name here
-        GOOGLE_PLAY_TRACK: "internal"
-      flutter: stable
+        PACKAGE_NAME: "com.sbdor.nosleep" # <-- Put your package name here
+        GOOGLE_PLAY_TRACK: "production"
+      flutter: 3.44.7
     scripts:
       - name: Set up local.properties
         script: |
@@ -25,18 +28,13 @@ workflows:
             flutter build appbundle --release \
               --build-name=1.0.$LATEST_BUILD_NUMBER \
               --build-number=$LATEST_BUILD_NUMBER
-    artifacts:
-      - build/**/outputs/**/*.aab
-      - build/**/outputs/**/mapping.txt
-      - flutter_drive.log
     publishing:
       email:
         recipients:
-          - user_1@example.com
-          - user_2@example.com
+          - avaz.shams.2002@gmail.com
         notify:
           success: true
-          failure: false
+          failure: true
       google_play:
         credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
         track: $GOOGLE_PLAY_TRACK

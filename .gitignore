@@ -57,5 +57,6 @@ reports/
 firebase.json
 *.freezed.dart
 *.g.dart
+nosleep-firebase-key.json
 
 sentry.properties

@@ -42,7 +42,15 @@ workflows:
           echo "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
       - name: Build AAB with Flutter
         script: |
-            flutter build appbundle --release --dart-define-from-file=config/production.json
+            flutter build appbundle --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define-from-file=config/production.json
+      - name: Upload debug symbols to Crashlytics
+        script: |
+          firebase crashlytics:symbols:upload \
+            --app=${{ secrets.ANDROID_FIREBASE_APP_ID }} \
+            build/debug-info
     publishing:
       email:
         recipients:

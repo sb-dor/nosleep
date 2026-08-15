@@ -44,6 +44,11 @@ jobs:
         env:
           FIREBASE_OPTIONS: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
 
+      - name: Create firebase.json
+        run: 'echo "$FIREBASE_JSON" | base64 --decode > firebase.json'
+        env:
+          FIREBASE_OPTIONS: ${{ secrets.FIREBASE_JSON_BASE64 }}
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:

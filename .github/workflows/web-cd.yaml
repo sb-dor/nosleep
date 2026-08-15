@@ -70,6 +70,6 @@ jobs:
         run: flutter build web --release --dart-define-from-file=config/production.json
 
       - name: Deploy to Firebase Hosting
-        run: firebase deploy --only hosting --project nosleep
+        run: firebase deploy --only hosting --project nosleep-9f36d
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase_key.json

@@ -1,3 +1,10 @@
+## [0.0.33] - 2026-08-16
+
+### Changed
+
+- Updated the Android release pipeline for faster and more reliable updates.
+- Improved crash reporting so issues are found and fixed sooner.
+
 ## [0.0.17] - 2026-05-10
 
 ### Changed

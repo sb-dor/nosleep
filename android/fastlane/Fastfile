@@ -1,0 +1,113 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    # `sh` runs from android/fastlane, so hop up to the repo root where pubspec.yaml lives
+    sh("cd ../.. && flutter test")
+  end
+
+  desc "Sync CHANGELOG.md notes for the current pubspec version into Play Store metadata"
+  lane :sync_changelog do
+    play_limit = 500
+    # User code in a Fastfile runs from android/fastlane, so the repo root is two up.
+    root = File.expand_path("../..", Dir.pwd)
+
+    version_line = File.readlines(File.join(root, "pubspec.yaml")).find { |l| l.start_with?("version:") }
+    UI.user_error!("No 'version:' line found in pubspec.yaml") if version_line.nil?
+
+    full_version = version_line.sub("version:", "").strip
+    version, version_code = full_version.split("+", 2)
+    if version_code.to_s.empty?
+      UI.user_error!("pubspec version '#{full_version}' has no +versionCode suffix")
+    end
+    UI.message("pubspec version: #{version} (versionCode #{version_code})")
+
+    # Collect the lines under "## [<version>]" up to the next "## [" heading.
+    notes = []
+    capturing = false
+    File.foreach(File.join(root, "CHANGELOG.md")) do |line|
+      if line.start_with?("## [#{version}]")
+        capturing = true
+        next
+      end
+      break if capturing && line.start_with?("## [")
+      notes << line if capturing
+    end
+
+    # Drop "### Added"-style subheadings, then trim surrounding blank lines.
+    notes = notes.reject { |l| l.start_with?("### ") }.join.strip
+
+    if notes.empty?
+      UI.user_error!("CHANGELOG.md has no entry for version #{version}. " \
+                     "Add a '## [#{version}] - #{Time.now.strftime('%Y-%m-%d')}' section before releasing.")
+    end
+
+    if notes.length > play_limit
+      kept = ""
+      notes.each_line do |line|
+        break if (kept + line).length > play_limit
+        kept += line
+      end
+      UI.important("Notes are #{notes.length} chars, over Play's #{play_limit} limit - truncating at a line boundary")
+      notes = kept.strip
+    end
+
+    # Fastlane keys changelogs by versionCode, not by version name.
+    dir = File.join(root, "android/fastlane/metadata/android/en-US/changelogs")
+    FileUtils.mkdir_p(dir)
+    target = File.join(dir, "#{version_code}.txt")
+
+    action = if !File.exist?(target)
+               "created"
+             elsif File.read(target).strip == notes
+               "unchanged"
+             else
+               "updated"
+             end
+
+    File.write(target, notes + "\n")
+    UI.success("#{action} #{target.sub(root + '/', '')} (#{notes.length} chars)")
+    UI.message("\n" + notes)
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    # Fails fast if CHANGELOG.md has no entry for the current pubspec version.
+    sync_changelog
+
+    # `sh` runs from android/fastlane, so hop up to the repo root where the Makefile lives.
+    # The target runs flutter-clean + generate, then builds the release appbundle with
+    # --dart-define-from-file=config/production.json.
+    sh("cd ../.. && make build-android-appBundle")
+
+    # Note the different base: fastlane actions run from android/, so the repo root is
+    # one level up here, but two levels up inside sh().
+    upload_to_play_store(
+      track: 'production',
+      aab: '../build/app/outputs/bundle/release/app-release.aab', # Update this path if your AAB is generated in a different location
+      skip_upload_apk: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_aab: false,
+      # release_status: 'draft'
+    )
+  end
+end

@@ -28,7 +28,7 @@ final class GithubReportsRepositoryImpl implements IGithubReportsRepository {
   }) async {
     final requestBody = {
       'title': title,
-      if (body != null) 'body': body,
+      'body': ?body,
       if (assignees != null && assignees.isNotEmpty) 'assignees': assignees,
       if (labels != null && labels.isNotEmpty) 'labels': labels,
     };

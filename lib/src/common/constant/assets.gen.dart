@@ -43,9 +43,7 @@ class $AssetsLauncherIconsGen {
   List<AssetGenImage> get values => [a1024, playStore512, splashScreen];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsLauncherIconsGen launcherIcons = $AssetsLauncherIconsGen();
 }

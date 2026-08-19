@@ -1,3 +1,10 @@
+## [0.0.36] - 2026-08-20
+
+### Changed
+
+- Release notes are now published to the store automatically with each update.
+- Improved the build and release process for more reliable app updates.
+
 ## [0.0.33] - 2026-08-16
 
 ### Changed

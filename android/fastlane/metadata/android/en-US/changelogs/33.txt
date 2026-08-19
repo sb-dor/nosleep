@@ -1,0 +1,2 @@
+- Release notes are now published to the store automatically with each update.
+- Improved the build and release process for more reliable app updates.

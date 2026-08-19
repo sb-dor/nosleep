@@ -1,0 +1,2 @@
+- Updated the Android release pipeline for faster and more reliable updates.
+- Improved crash reporting so issues are found and fixed sooner.

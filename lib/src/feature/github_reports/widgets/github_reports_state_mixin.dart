@@ -263,7 +263,7 @@ mixin GithubReportsStateMixin<W extends StatefulWidget> on State<W> {
           ),
           const SizedBox(height: 5),
           Text(message, style: TextStyle(fontSize: 15, color: Colors.grey[300], height: 1.6)),
-          if (extraWidget != null) extraWidget,
+          ?extraWidget,
         ],
       ),
     );
